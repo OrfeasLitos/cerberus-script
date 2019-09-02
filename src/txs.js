@@ -4,6 +4,17 @@ const MTX = bcoin.primitives.MTX
 
 class CommitmentTX extends MTX {
   constructor(options) {
+    function checkArgs(args) {
+      if (!args) {
+        throw new TypeError("CommitmentTX: No argument given, one needed")
+      }
+      if (!args.sig1 || !args.sig2) {
+        throw new TypeError("CommitmentTX: Missing sig1 or sig2 from argument properties")
+      }
+      // TODO: continue
+    }
+
+    //checkArgs(options) // TODO: maybe go unchecked
     super(options)
     const script1 = this.getScript(options.rev_key1, options.rev_key2,
                                    options.delay, options.del_key)
