@@ -83,3 +83,12 @@ Like
   * script: P2WPKH to `<bob_pubkey>`
 
 ## Penalty transaction (off-chain for an open channel)
+
+* input 1 spends output 2 of a Commitment tx, following the path with the delay.
+* input 2 spends the output of a Collateral tx, with scriptSig (?) `0 <collateral_sig1>
+  <collateral_sig2>`.
+
+* output:
+  * value: `b' + a + b + ε`, where `b'` is Bob's old balance as found in the Commitment tx
+    spent by this Penalty tx
+  * script: P2WPKH to `<bob_pubkey>`
