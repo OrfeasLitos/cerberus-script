@@ -16,14 +16,14 @@ Like
 
 ## Collateral transaction output (on-chain)
 
-* value: `a + b + ε`
+* value: `a + b + ε` (provided by W)
 * script: `2 <pubkey3> <pubkey4> 2 OP_CHECKMULTISIG`, where `pubkey3`, `pubkey4` are the
   `collateral_pubkey`s of Bob and W, sorted by ascending order of their DER-encodings.
 
 ## Commitment transaction held by Alice (off-chain)
 
 * unique input spends Funding output with witness script `0 <pubkey1_sig> <pubkey2_sig>`
-* 1st of 2 outputs: like [LN
+* output 1: like [LN
   revocation](https://github.com/lightningnetwork/lightning-rfc/blob/636b9f2e28c5eb9564b50b85ac85e23fc2176623/03-transactions.md#to_local-output)
   * value: `a`
   * script:
@@ -39,7 +39,9 @@ Like
   OP_ENDIF
   OP_CHECKSIG
   ```
-* 2nd of 2 outputs:
+  * Spendable by witnesses `<alice_delayed_sig> 0` or `0 <revocation_sig1>
+    <revocation_sig2> 1`
+* output 2:
   * value: `b`
   * script:
   ```
