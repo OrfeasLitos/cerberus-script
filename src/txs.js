@@ -71,3 +71,5 @@ class PenaltyTX extends MTX {
     super(options)
   }
 }
+
+module.exports = CommitmentTX
