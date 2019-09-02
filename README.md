@@ -17,8 +17,9 @@ Like
 ## Collateral transaction output (on-chain)
 
 * value: `a + b + ε` (provided by W)
-* script: `2 <pubkey3> <pubkey4> 2 OP_CHECKMULTISIG`, where `pubkey3`, `pubkey4` are the
-  `collateral_pubkey`s of Bob and W, sorted by ascending order of their DER-encodings.
+* script: `2 <collateral_pubkey1> <collateral_pubkey2> 2 OP_CHECKMULTISIG`, where
+  `collateral_pubkey1`, `collateral_pubkey2` are the public keys of Bob and W,
+  sorted by ascending order of their DER-encodings.
 
 ## Commitment transaction held by Alice (off-chain)
 
