@@ -2,6 +2,18 @@ const bcoin = require('bcoin')
 const Script = bcoin.script.Script
 const MTX = bcoin.primitives.MTX
 
+class FundingTX extends MTX {
+  constructor(options) {
+    super(options)
+  }
+}
+
+class CollateralTX extends MTX {
+  constructor(options) {
+    super(options)
+  }
+}
+
 class CommitmentTX extends MTX {
   constructor(options) { // keyrings, sigs
     function checkArgs(args) {
@@ -45,5 +57,17 @@ class CommitmentTX extends MTX {
 
     res.compile()
     return res
+  }
+}
+
+class RevocationTX extends MTX {
+  constructor(options) {
+    super(options)
+  }
+}
+
+class PenaltyTX extends MTX {
+  constructor(options) {
+    super(options)
   }
 }
