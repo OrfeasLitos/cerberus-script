@@ -30,23 +30,48 @@ Like
   ```
   OP_IF
       # Revocation
-      <revocation_pubkey>
+      2
+      <revocation_pubkey1>
+      <revocation_pubkey2>
+      2
+      OP_CHECKMULTISIG
   OP_ELSE
       `bob_delay`
       OP_CHECKSEQUENCEVERIFY
       OP_DROP
       <alice_delayed_pubkey>
+      OP_CHECKSIG
   OP_ENDIF
-  OP_CHECKSIG
   ```
+  Where `<revocation_pubkey1> and <revocation_pubkey2> are the two keys
+  <alice_collateral_pubkey> <watchtower_revocation_pubkey>, sorted by ascending order of
+  their DER-encodings.
   * Spendable by witnesses `<alice_delayed_sig> 0` or `0 <revocation_sig1>
     <revocation_sig2> 1`
 * output 2:
   * value: `b`
   * script:
   ```
-  
+  OP_IF
+      # Revocation
+      2
+      <revocation_pubkey3>
+      <revocation_pubkey4>
+      2
+      OP_CHECKMULTISIG
+  OP_ELSE
+      `bob_delay`
+      OP_CHECKSEQUENCEVERIFY
+      OP_DROP
+      <bob_delayed_pubkey>
+      OP_CHECKSIG
+  OP_ENDIF
   ```
+  Where `<revocation_pubkey3> and <revocation_pubkey4> are the two keys
+  <bob_collateral_pubkey> <watchtower_revocation_pubkey>, sorted by ascending order of
+  their DER-encodings.
+  * Spendable by witnesses `<bob_delayed_sig> 0` or `0 <revocation_sig3> <revocation_sig4>
+    1`
 
 ## Revocation transaction (off-chain for an open channel)
 
