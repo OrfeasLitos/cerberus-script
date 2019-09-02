@@ -3,7 +3,7 @@ const Script = bcoin.script.Script
 const MTX = bcoin.primitives.MTX
 
 class CommitmentTX extends MTX {
-  constructor(options) {
+  constructor(options) { // keyrings, sigs
     function checkArgs(args) {
       if (!args) {
         throw new TypeError("CommitmentTX: No argument given, one needed")
