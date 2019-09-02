@@ -76,4 +76,10 @@ Like
 
 ## Revocation transaction (off-chain for an open channel)
 
+* input 1 spends output 1 of a Commitment tx, following the revocation path.
+* input 2 spends output 2 of a Commitment tx, following the revocation path.
+* output:
+  * value: `a + b`
+  * script: P2WPKH to `<bob_pubkey>`
+
 ## Penalty transaction (off-chain for an open channel)
