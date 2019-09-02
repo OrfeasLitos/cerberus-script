@@ -16,7 +16,7 @@ Like
 
 ## Collateral transaction output (on-chain)
 
-* value: `a + b + e`
+* value: `a + b + ε`
 * script: `2 <pubkey3> <pubkey4> 2 OP_CHECKMULTISIG`, where `pubkey3`, `pubkey4` are the
   `collateral_pubkey`s of Bob and W, sorted by ascending order of their DER-encodings.
 
