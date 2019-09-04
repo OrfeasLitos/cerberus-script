@@ -5,6 +5,8 @@ const bcrypto = require('bcrypto')
 const assert = require('bsert')
 
 const MTX = bcoin.primitives.MTX
+const Coin = bcoin.primitives.Coin
+const Amount = bcoin.btc.Amount
 const Input = bcoin.primitives.Input
 const Script = bcoin.script.Script
 const secp256k1 = bcrypto.secp256k1
@@ -34,30 +36,29 @@ function orderKeys(key1, key2) {
   }
 }
 
-const Watchtower = {}
+const Watchtower = {
+  getCommScript : function (rev_key1, rev_key2, delay, del_key) {
+    const res = new Script()
 
-Watchtower.getCommScript = function (rev_key1, rev_key2, delay, del_key) {
-  const res = new Script()
+    res.pushSym('OP_IF')
+    res.pushInt(2)
+    res.pushData(rev_key1)
+    res.pushData(rev_key2)
+    res.pushInt(2)
+    res.pushSym('OP_CHECKMULTISIG')
+    res.pushSym('OP_ELSE')
+    res.pushInt(delay)
+    res.pushSym('OP_CHECKSEQUENCEVERIFY')
+    res.pushSym('OP_DROP')
+    res.pushData(del_key)
+    res.pushSym('OP_CHECKSIG')
+    res.pushSym('OP_ENDIF')
 
-  res.pushSym('OP_IF')
-  res.pushInt(2)
-  res.pushData(rev_key1)
-  res.pushData(rev_key2)
-  res.pushInt(2)
-  res.pushSym('OP_CHECKMULTISIG')
-  res.pushSym('OP_ELSE')
-  res.pushInt(delay)
-  res.pushSym('OP_CHECKSEQUENCEVERIFY')
-  res.pushSym('OP_DROP')
-  res.pushData(del_key)
-  res.pushSym('OP_CHECKSIG')
-  res.pushSym('OP_ENDIF')
+    res.compile()
+    return res
+  },
 
-  res.compile()
-  return res
-}
-
-Watchtower.commitmentTX = function ({
+  commitmentTX : async function ({
     rings: {
       aliceFundRing, bobFundRing, aliceColRing,
       wRevRing1, aliceDelRing, bobColRing,
@@ -75,23 +76,34 @@ Watchtower.commitmentTX = function ({
       && wRevRing1.publicKey.equals(wRevRing2.publicKey),
       'watchtower revocation keys must be equal'
     ) // TODO: discuss if equality desired
-  const ctx = new MTX()
 
-  ctx.addInput({
-    prevout,
-    script: Script.fromMultisig(2, 2, orderKeys(aliceFundKey, bobFundKey)),
-    witness: // TODO
-  })
+    aliceFundRing.script = Script.fromMultisig(2, 2,
+      orderKeys(aliceFundRing.publicKey, bobFundRing.publicKey))
+    const aliceAddress = aliceFundRing.getAddress()
+    const script = Script.fromAddress(aliceAddress)
+    const txinfo = {
+      hash: prevout.hash,
+      index: prevout.index,
+      value: Amount.fromBTC(aliceCoins + bobCoins + fee).toValue(),
+      script: script
+    }
+    const coin = Coin.fromOptions(txinfo)
 
-  let [key1, key2] = orderKeys(aliceColKey, wRevKey1)
-  const aliceScript = Watchtower.getCommScript(key1, key2, bobDelay, aliceDelKey)
-  ctx.addOutput(aliceScript, aliceCoins)
+    const ctx = new MTX()
 
-  [key1, key2] = orderKeys(bobColKey, wRevKey2)
-  const bobScript = Watchtower.getCommScript(key1, key2, aliceDelay, bobDelKey)
-  ctx.addOutput(bobScript, bobCoins)
+    await ctx.fund([coin], {changeAddress: aliceAddress})
+    ctx.scriptInput(0, coin, aliceFundRing)
 
-  return ctx
+    let [key1, key2] = orderKeys(aliceColRing.publicKey, wRevRing1.publicKey)
+    const aliceScript = Watchtower.getCommScript(key1, key2, bobDelay, aliceDelRing.publicKey)
+    ctx.addOutput(aliceScript, aliceCoins)
+
+    ; [key1, key2] = orderKeys(bobColRing.publicKey, wRevRing2.publicKey) // we all love ;-bugs
+    const bobScript = Watchtower.getCommScript(key1, key2, aliceDelay, bobDelRing.publicKey)
+    ctx.addOutput(bobScript, bobCoins)
+
+    return ctx
+  }
 }
 
 module.exports = Watchtower
