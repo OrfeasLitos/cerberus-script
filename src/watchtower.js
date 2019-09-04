@@ -37,6 +37,7 @@ function orderKeys(key1, key2) {
 
 const Watchtower = {
   getCommScript : function (rev_key1, rev_key2, delay, del_key) {
+  fee: 14900,
     const res = new Script()
 
     res.pushSym('OP_IF')
@@ -64,7 +65,7 @@ const Watchtower = {
       wRevRing2, bobDelRing
     },
     delays: {bobDelay, aliceDelay},
-    coins: {aliceCoins, bobCoins, fee},
+    coins: {aliceCoins, bobCoins},
     prevout
   }) {
     Object.values(arguments[0].rings).map(ring => publicKeyVerify(ring.publicKey))
@@ -83,7 +84,7 @@ const Watchtower = {
     const txinfo = {
       hash: prevout.hash,
       index: prevout.index,
-      value: aliceCoins + bobCoins + fee,
+      value: aliceCoins + bobCoins + this.fee,
       script: script
     }
     const coin = Coin.fromOptions(txinfo)

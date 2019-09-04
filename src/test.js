@@ -12,10 +12,8 @@ const WchTwr = require('./watchtower')
         .map(x => KeyRing.generate())
   rings.map(ring => {ring.witness = true})
   const delay = 42
-  const fee = 1
   const aliceCoins = Amount.fromBTC(10).toValue()
   const bobCoins = Amount.fromBTC(20).toValue()
-  const fee = Amount.fromBTC(1).toValue()
   const hash = sha256.digest(Buffer.from('')).toString('hex')
 
   const ctx = await WchTwr.commitmentTX({
@@ -26,7 +24,7 @@ const WchTwr = require('./watchtower')
       wRevRing2: rings[3], bobDelRing: rings[6]
     },
     delays: {bobDelay: delay, aliceDelay: delay},
-    coins: {aliceCoins, bobCoins, fee},
+    coins: {aliceCoins, bobCoins},
     prevout: {hash, index: 0}
   })
 
