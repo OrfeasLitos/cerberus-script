@@ -6,7 +6,6 @@ const assert = require('bsert')
 
 const MTX = bcoin.primitives.MTX
 const Coin = bcoin.primitives.Coin
-const Amount = bcoin.btc.Amount
 const Input = bcoin.primitives.Input
 const Script = bcoin.script.Script
 const secp256k1 = bcrypto.secp256k1
@@ -84,7 +83,7 @@ const Watchtower = {
     const txinfo = {
       hash: prevout.hash,
       index: prevout.index,
-      value: Amount.fromBTC(aliceCoins + bobCoins + fee).toValue(),
+      value: aliceCoins + bobCoins + fee,
       script: script
     }
     const coin = Coin.fromOptions(txinfo)
