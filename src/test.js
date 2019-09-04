@@ -1,3 +1,5 @@
+'use strict'
+
 const bcoin = require('bcoin')
 const sha256 = require('bcrypto/lib/sha256')
 const KeyRing = bcoin.primitives.KeyRing
