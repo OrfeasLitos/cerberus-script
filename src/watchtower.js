@@ -36,8 +36,8 @@ function orderKeys(key1, key2) {
 }
 
 const Watchtower = {
-  getCommScript : function (rev_key1, rev_key2, delay, del_key) {
   fee: 14900,
+  getCommScript: function (rev_key1, rev_key2, delay, del_key) {
     const res = new Script()
 
     res.pushSym('OP_IF')
@@ -58,7 +58,7 @@ const Watchtower = {
     return res
   },
 
-  commitmentTX : async function ({
+  commitmentTX: async function ({
     rings: {
       aliceFundRing, bobFundRing, aliceColRing,
       wRevRing1, aliceDelRing, bobColRing,
