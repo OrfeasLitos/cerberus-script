@@ -35,6 +35,16 @@ function orderKeys(key1, key2) {
   }
 }
 
+function outputScriptFromWitnessScript(witnessScript) {
+  const res = new Script()
+
+  res.pushSym('OP_0')
+  res.pushData(witnessScript.sha256())
+  res.compile()
+
+  return res
+}
+
 const Watchtower = {
   fee: 14900,
   getCommScript: function (rev_key1, rev_key2, delay, del_key) {
@@ -91,16 +101,16 @@ const Watchtower = {
 
     const ctx = new MTX()
 
-    await ctx.fund([coin], {changeAddress: aliceAddress})
-    ctx.scriptInput(0, coin, aliceFundRing)
-
     let [key1, key2] = orderKeys(aliceColRing.publicKey, wRevRing1.publicKey)
-    const aliceScript = Watchtower.getCommScript(key1, key2, bobDelay, aliceDelRing.publicKey)
-    ctx.addOutput(aliceScript, aliceCoins)
+    const aliceWitScript = Watchtower.getCommScript(key1, key2, bobDelay, aliceDelRing.publicKey)
+    ctx.addOutput(outputScriptFromWitnessScript(aliceWitScript), aliceCoins)
 
     ; [key1, key2] = orderKeys(bobColRing.publicKey, wRevRing2.publicKey) // we all love ;-bugs
-    const bobScript = Watchtower.getCommScript(key1, key2, aliceDelay, bobDelRing.publicKey)
-    ctx.addOutput(bobScript, bobCoins)
+    const bobWitScript = Watchtower.getCommScript(key1, key2, aliceDelay, bobDelRing.publicKey)
+    ctx.addOutput(outputScriptFromWitnessScript(bobWitScript), bobCoins)
+
+    await ctx.fund([coin], {changeAddress: aliceAddress})
+    ctx.scriptInput(0, coin, aliceFundRing)
 
     return ctx
   }
