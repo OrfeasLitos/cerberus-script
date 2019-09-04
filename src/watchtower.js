@@ -58,25 +58,23 @@ Watchtower.getCommScript = function (rev_key1, rev_key2, delay, del_key) {
 }
 
 Watchtower.commitmentTX = function ({
-    input: {prevout, aliceFundKey, bobFundKey},
-    aliceOut: {aliceColKey, wRevKey1, aliceDelKey, bobDelay, aliceCoins},
-    bobOut: {bobColKey, wRevKey2, bobDelKey, aliceDelay, bobCoins}}) {
-
-  publicKeyVerify(aliceFundKey)
-  publicKeyVerify(bobFundKey)
-  publicKeyVerify(aliceColKey)
-  publicKeyVerify(wRevKey1)
-  assert(Buffer.isBuffer(wRevKey1) && wRevKey1.equals(wRevKey2),
-      'watchtower revocation keys must be equal') // TODO: discuss if equality desired
-  publicKeyVerify(aliceDelKey)
-  delayVerify(bobDelay)
-  coinVerify(aliceCoins)
-
-  publicKeyVerify(bobColKey)
-  publicKeyVerify(bobDelKey)
-  delayVerify(aliceDelay)
-  coinVerify(bobCoins)
-
+    rings: {
+      aliceFundRing, bobFundRing, aliceColRing,
+      wRevRing1, aliceDelRing, bobColRing,
+      wRevRing2, bobDelRing
+    },
+    delays: {bobDelay, aliceDelay},
+    coins: {aliceCoins, bobCoins, fee},
+    prevout
+  }) {
+    Object.values(arguments[0].rings).map(ring => publicKeyVerify(ring.publicKey))
+    Object.values(arguments[0].delays).map(delayVerify)
+    Object.values(arguments[0].coins).map(coinVerify)
+    assert(
+      Buffer.isBuffer(wRevRing1.publicKey)
+      && wRevRing1.publicKey.equals(wRevRing2.publicKey),
+      'watchtower revocation keys must be equal'
+    ) // TODO: discuss if equality desired
   const ctx = new MTX()
 
   ctx.addInput({

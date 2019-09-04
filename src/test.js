@@ -6,20 +6,23 @@ const KeyRing = bcoin.primitives.KeyRing
 
 const WchTwr = require('./watchtower')
 
-const rev_key1 = KeyRing.generate().publicKey
-const rev_key2 = KeyRing.generate().publicKey
+const rings = Array.apply(null, Array(7))
+      .map(x => KeyRing.generate())
+rings.map(ring => {ring.witness = true})
 const delay = 42
-const del_key = KeyRing.generate().publicKey
 const aliceCoins = 10
 const bobCoins = 20
 const hash = sha256.digest(Buffer.from('')).toString('hex')
 
-const ctx = WchTwr.commitmentTX({
-  prevout: {hash, index: 0},
-  aliceOut: {aliceColKey: rev_key1, wRevKey1: rev_key2,
-             aliceDelKey: del_key, bobDelay: delay, aliceCoins},
-  bobOut: {bobColKey: rev_key1, wRevKey2: rev_key2,
-           bobDelKey: del_key, aliceDelay: delay, bobCoins}
+  rings: {
+    aliceFundRing: rings[0], bobFundRing: rings[1],
+    aliceColRing: rings[2], wRevRing1: rings[3],
+    aliceDelRing: rings[4], bobColRing: rings[5],
+    wRevRing2: rings[3], bobDelRing: rings[6]
+  },
+  delays: {bobDelay: delay, aliceDelay: delay},
+  coins: {aliceCoins, bobCoins, fee},
+  prevout: {hash, index: 0}
 })
 
 console.log(ctx)
