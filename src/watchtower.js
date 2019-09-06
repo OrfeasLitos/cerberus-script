@@ -1,7 +1,11 @@
 'use strict'
 
 const Watchtower = {
-  getCommitmentTX: require('./commitment')
+  getFundingTX: require('./funding'),
+  getCollateralTX: require('./collateral').
+  getCommitmentTX: require('./commitment'),
+  getPenaltyTX: require('./penalty'),
+  getRevocationTX: require('./revocation'),
 }
 
 module.exports = Watchtower
