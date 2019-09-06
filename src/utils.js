@@ -6,8 +6,14 @@ const assert = require('bsert')
 
 const secp256k1 = bcrypto.secp256k1
 const Script = bcoin.script.Script
+const KeyRing = bcoin.primitives.KeyRing
 
 const Utils = {
+  ensureWitness: function (ring) {
+    assert(KeyRing.isKeyRing(ring), 'ring not an instance of KeyRing')
+    assert(ring.witness, 'ring must have the witness property true')
+  },
+
   publicKeyVerify: function (key) {
     assert(secp256k1.publicKeyVerify(key), 'not a valid public key')
   },

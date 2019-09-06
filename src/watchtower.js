@@ -25,6 +25,7 @@ const Watchtower = {
     coins: {aliceCoins, bobCoins},
     prevout
   }) {
+    Object.values(arguments[0].rings).map(Utils.ensureWitness)
     Object.values(arguments[0].rings).map(ring => Utils.publicKeyVerify(ring.publicKey))
     Object.values(arguments[0].delays).map(Utils.delayVerify)
     Object.values(arguments[0].coins).map(Utils.coinVerify)
