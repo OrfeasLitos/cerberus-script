@@ -1,9 +1,7 @@
 'use strict'
 
-const getCommitmentTX = require('./commitment')
-
 const Watchtower = {
-  getCommitmentTX,
+  getCommitmentTX: require('./commitment')
 }
 
 module.exports = Watchtower
