@@ -49,12 +49,12 @@ const Watchtower = {
     const ctx = new MTX()
 
     let [key1, key2] = Utils.orderKeys(aliceColRing.publicKey, wRevRing1.publicKey)
-    const aliceWitScript = Scripts.commScript(key1, key2, bobDelay, aliceDelRing.publicKey)
-    ctx.addOutput(Utils.outputScrFromWitnessScr(aliceWitScript), aliceCoins)
+    const aliceWitScr = Scripts.commScript(key1, key2, bobDelay, aliceDelRing.publicKey)
+    ctx.addOutput(Utils.outputScrFromWitScr(aliceWitScr), aliceCoins)
 
     ; [key1, key2] = Utils.orderKeys(bobColRing.publicKey, wRevRing2.publicKey) // we all love ;-bugs
-    const bobWitScript = Scripts.commScript(key1, key2, aliceDelay, bobDelRing.publicKey)
-    ctx.addOutput(Utils.outputScrFromWitnessScr(bobWitScript), bobCoins)
+    const bobWitScr = Scripts.commScript(key1, key2, aliceDelay, bobDelRing.publicKey)
+    ctx.addOutput(Utils.outputScrFromWitScr(bobWitScr), bobCoins)
 
     await ctx.fund([coin], {changeAddress: aliceAddress})
     ctx.scriptInput(0, coin, aliceFundRing)
