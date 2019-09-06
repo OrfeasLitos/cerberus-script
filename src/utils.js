@@ -31,7 +31,7 @@ const Utils = {
     }
   },
 
-  outputScriptFromWitnessScript: function (witnessScript) {
+  outputScrFromWitnessScr: function (witnessScript) {
     const res = new Script()
 
     res.pushSym('OP_0')
