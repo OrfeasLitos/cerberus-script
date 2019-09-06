@@ -62,3 +62,6 @@ typings/
 
 # images
 *.jpg
+
+# vim swap files
+*.swp
