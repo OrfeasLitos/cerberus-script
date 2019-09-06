@@ -3,7 +3,9 @@
 const bcoin = require('bcoin')
 const bcrypto = require('bcrypto')
 const assert = require('bsert')
+
 const Utils = require('./utils')
+const Scripts = require('./scripts')
 
 const MTX = bcoin.primitives.MTX
 const Coin = bcoin.primitives.Coin
@@ -12,26 +14,6 @@ const Script = bcoin.script.Script
 
 const Watchtower = {
   fee: 14900,
-  getCommScript: function (rev_key1, rev_key2, delay, del_key) {
-    const res = new Script()
-
-    res.pushSym('OP_IF')
-    res.pushInt(2)
-    res.pushData(rev_key1)
-    res.pushData(rev_key2)
-    res.pushInt(2)
-    res.pushSym('OP_CHECKMULTISIG')
-    res.pushSym('OP_ELSE')
-    res.pushInt(delay)
-    res.pushSym('OP_CHECKSEQUENCEVERIFY')
-    res.pushSym('OP_DROP')
-    res.pushData(del_key)
-    res.pushSym('OP_CHECKSIG')
-    res.pushSym('OP_ENDIF')
-
-    res.compile()
-    return res
-  },
 
   commitmentTX: async function ({
     rings: {
@@ -67,11 +49,11 @@ const Watchtower = {
     const ctx = new MTX()
 
     let [key1, key2] = Utils.orderKeys(aliceColRing.publicKey, wRevRing1.publicKey)
-    const aliceWitScript = Watchtower.getCommScript(key1, key2, bobDelay, aliceDelRing.publicKey)
+    const aliceWitScript = Scripts.commScript(key1, key2, bobDelay, aliceDelRing.publicKey)
     ctx.addOutput(Utils.outputScrFromWitnessScr(aliceWitScript), aliceCoins)
 
     ; [key1, key2] = Utils.orderKeys(bobColRing.publicKey, wRevRing2.publicKey) // we all love ;-bugs
-    const bobWitScript = Watchtower.getCommScript(key1, key2, aliceDelay, bobDelRing.publicKey)
+    const bobWitScript = Scripts.commScript(key1, key2, aliceDelay, bobDelRing.publicKey)
     ctx.addOutput(Utils.outputScrFromWitnessScr(bobWitScript), bobCoins)
 
     await ctx.fund([coin], {changeAddress: aliceAddress})
