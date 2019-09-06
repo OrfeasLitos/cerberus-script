@@ -44,7 +44,7 @@ const Watchtower = {
       value: aliceCoins + bobCoins + this.fee,
       script: script
     }
-    const coin = Coin.fromOptions(txinfo)
+    const fundingCoin = Coin.fromOptions(txinfo)
 
     const ctx = new MTX()
 
@@ -56,8 +56,8 @@ const Watchtower = {
     const bobWitScr = Scripts.commScript(key1, key2, aliceDelay, bobDelRing.publicKey)
     ctx.addOutput(Utils.outputScrFromWitScr(bobWitScr), bobCoins)
 
-    await ctx.fund([coin], {changeAddress: aliceAddress})
-    ctx.scriptInput(0, coin, aliceFundRing)
+    await ctx.fund([fundingCoin], {changeAddress: aliceAddress})
+    ctx.scriptInput(0, fundingCoin, aliceFundRing)
 
     return ctx
   }
