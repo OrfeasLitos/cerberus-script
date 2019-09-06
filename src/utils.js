@@ -1,3 +1,5 @@
+'use strict'
+
 const bcoin = require('bcoin')
 const bcrypto = require('bcrypto')
 const assert = require('bsert')

@@ -1,3 +1,5 @@
+'use strict'
+
 const bcoin = require('bcoin')
 const Script = bcoin.script.Script
 
