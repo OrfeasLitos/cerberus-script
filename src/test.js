@@ -15,8 +15,9 @@ const WchTwr = require('./watchtower')
   const aliceCoins = Amount.fromBTC(10).toValue()
   const bobCoins = Amount.fromBTC(20).toValue()
   const hash = sha256.digest(Buffer.from('')).toString('hex')
+  const fee = 14900
 
-  const ctx = await WchTwr.commitmentTX({
+  const ctx = await WchTwr.getCommitmentTX({
     rings: {
       aliceFundRing: rings[0], bobFundRing: rings[1],
       aliceColRing: rings[2], wRevRing1: rings[3],
@@ -24,7 +25,7 @@ const WchTwr = require('./watchtower')
       wRevRing2: rings[3], bobDelRing: rings[6]
     },
     delays: {bobDelay: delay, aliceDelay: delay},
-    coins: {aliceCoins, bobCoins},
+    coins: {aliceCoins, bobCoins, fee},
     prevout: {hash, index: 0}
   })
 
