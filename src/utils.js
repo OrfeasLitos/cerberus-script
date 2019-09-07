@@ -10,20 +10,20 @@ const KeyRing = bcoin.primitives.KeyRing
 
 module.exports = {
   ensureWitness: function (ring) {
-    assert(KeyRing.isKeyRing(ring), 'ring not an instance of KeyRing')
-    assert(ring.witness, 'ring must have the witness property true')
+    assert(KeyRing.isKeyRing(ring), 'Ring not an instance of KeyRing')
+    assert(ring.witness, 'Ring must have the witness property true')
   },
 
   publicKeyVerify: function (key) {
-    assert(secp256k1.publicKeyVerify(key), 'not a valid public key')
+    assert(secp256k1.publicKeyVerify(key), 'Not a valid public key')
   },
 
   delayVerify: function (num) {
-    assert(Number.isInteger(num) && (num > 0), 'delay must be a positive integer')
+    assert(Number.isInteger(num) && (num > 0), 'Delay must be a positive integer')
   },
 
   coinVerify: function (num) {
-    assert(Number.isInteger(num) && (num > 0), 'coins must be a positive integer in Satoshi')
+    assert(Number.isInteger(num) && (num > 0), 'Coins must be a positive integer in Satoshi')
   },
 
   sortKeys: function (key1, key2) {
