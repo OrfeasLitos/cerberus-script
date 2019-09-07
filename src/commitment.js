@@ -25,7 +25,7 @@ function verifyInput(rings, delays, coins, wRevRing1, wRevRing2) {
 
 function getFundingCoin(prevout, ring, pubKey1, pubKey2, coins1, coins2, fee) {
   ring.script = Script.fromMultisig(2, 2,
-    Utils.orderKeys(pubKey1, pubKey2)
+    Utils.sortKeys(pubKey1, pubKey2)
   )
   const address = ring.getAddress()
   const script = Script.fromAddress(address)
@@ -39,7 +39,7 @@ function getFundingCoin(prevout, ring, pubKey1, pubKey2, coins1, coins2, fee) {
 }
 
 function addCommitmentOutput(tx, colKey, watchKey, delay, delKey, coins) {
-  const [key1, key2] = Utils.orderKeys(colKey, watchKey)
+  const [key1, key2] = Utils.sortKeys(colKey, watchKey)
   const witnessScript = Scripts.commScript(key1, key2, delay, delKey)
   const outputScript = Utils.outputScrFromWitScr(witnessScript)
 

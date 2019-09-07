@@ -26,7 +26,7 @@ const Utils = {
     assert(Number.isInteger(num) && (num > 0), 'coins must be a positive integer in Satoshi')
   },
 
-  orderKeys: function (key1, key2) {
+  sortKeys: function (key1, key2) {
     switch (Buffer.compare(key1, key2)) {
       case -1:
         return [key1, key2]
