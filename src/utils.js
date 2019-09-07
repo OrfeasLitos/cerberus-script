@@ -8,7 +8,7 @@ const secp256k1 = bcrypto.secp256k1
 const Script = bcoin.script.Script
 const KeyRing = bcoin.primitives.KeyRing
 
-const Utils = {
+module.exports = {
   ensureWitness: function (ring) {
     assert(KeyRing.isKeyRing(ring), 'ring not an instance of KeyRing')
     assert(ring.witness, 'ring must have the witness property true')
@@ -49,5 +49,3 @@ const Utils = {
     return res
   }
 }
-
-module.exports = Utils
