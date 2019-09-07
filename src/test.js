@@ -27,7 +27,7 @@ const WchTwr = require('./watchtower')
 
   const inCoin = new Coin({
     value: aliceCoins + bobCoins + fundingFee,
-    script: Script.fromPubkeyhash(rings[0].getAddress().hash),
+    script: Script.fromPubkeyhash(rings[0].getAddress().hash), // TODO: make p2wpkh
     hash,
     index: 0,
     address: rings[0].getAddress()
