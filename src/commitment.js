@@ -38,12 +38,10 @@ function getFundingCoin(prevout, ring, pubKey1, pubKey2, amount1, amount2, fee) 
   return Coin.fromOptions(txinfo)
 }
 
-function addCommitmentOutput(tx, colKey, watchKey, delay, delKey, amount) {
+function getCommitmentOutput(colKey, watchKey, delay, delKey, amount) {
   const [key1, key2] = Utils.sortKeys(colKey, watchKey)
   const witnessScript = Scripts.commScript(key1, key2, delay, delKey)
-  const outputScript = Utils.outputScrFromWitScr(witnessScript)
-
-  tx.addOutput(outputScript, amount)
+  return Utils.outputScrFromWitScr(witnessScript)
 }
 
 async function addCommitmentInput(ctx, prevout, ring, pubKey1, pubKey2, amount1, amount2, fee) {
@@ -69,15 +67,17 @@ async function getCommitmentTX({
 
   const ctx = new MTX()
 
-  addCommitmentOutput(
-    ctx, aliceColRing.publicKey, wRevRing1.publicKey, bobDelay,
-    aliceDelRing.publicKey, aliceAmount
+  const aliceOutput = getCommitmentOutput(
+    aliceColRing.publicKey, wRevRing1.publicKey,
+    bobDelay, aliceDelRing.publicKey
   )
+  ctx.addOutput(aliceOutput, aliceAmount)
 
-  addCommitmentOutput(
-    ctx, bobColRing.publicKey, wRevRing2.publicKey, aliceDelay,
-    bobDelRing.publicKey, bobAmount
+  const bobOutput = getCommitmentOutput(
+    bobColRing.publicKey, wRevRing2.publicKey,
+    aliceDelay, bobDelRing.publicKey
   )
+  ctx.addOutput(bobOutput, bobAmount)
 
   await addCommitmentInput(
     ctx, prevout, aliceFundRing, aliceFundRing.publicKey,
