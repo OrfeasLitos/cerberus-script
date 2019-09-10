@@ -12,20 +12,20 @@ function interpretInput(args) {
   // TODO
 }
 
-function addFundingOutput(ftx, fundKey1, fundKey2, coins) {
+function addFundingOutput(ftx, fundKey1, fundKey2, amount) {
   const witnessScript = Script.fromMultisig(2, 2, [fundKey1, fundKey2])
   const outputScript = Utils.outputScrFromWitScr(witnessScript)
-  ftx.addOutput(outputScript, coins)
+  ftx.addOutput(outputScript, amount)
 }
 
-function getFundingTXFromMTX({ftx, fundKey1, fundKey2, coins}) { // TODO: test
-  addFundingOutput(ftx, fundKey1, fundKey2, coins)
+function getFundingTXFromMTX({ftx, fundKey1, fundKey2, amount}) { // TODO: test
+  addFundingOutput(ftx, fundKey1, fundKey2, amount)
   return ftx
 }
 
-async function getFundingTXFromCoin({inCoin, ring, fundKey1, fundKey2, outCoins}) {
+async function getFundingTXFromCoin({inCoin, ring, fundKey1, fundKey2, outAmount}) {
   const ftx = new MTX()
-  addFundingOutput(ftx, fundKey1, fundKey2, outCoins)
+  addFundingOutput(ftx, fundKey1, fundKey2, outAmount)
   const changeAddress = ring.getAddress()
 
   await ftx.fund([inCoin], {changeAddress})

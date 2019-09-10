@@ -22,8 +22,8 @@ module.exports = {
     assert(Number.isInteger(num) && (num > 0), 'Delay must be a positive integer')
   },
 
-  coinVerify: function (num) {
-    assert(Number.isInteger(num) && (num > 0), 'Coins must be a positive integer in Satoshi')
+  amountVerify: function (num) {
+    assert(Number.isInteger(num) && (num > 0), 'Amount must be a positive integer in Satoshi')
   },
 
   sortKeys: function (key1, key2) {

@@ -17,8 +17,8 @@ const WchTwr = require('./watchtower')
         .map(x => KeyRing.generate())
   rings.map(ring => {ring.witness = true})
   const delay = 42
-  const aliceCoins = Amount.fromBTC(10).toValue()
-  const bobCoins = Amount.fromBTC(20).toValue()
+  const aliceAmount = Amount.fromBTC(10).toValue()
+  const bobAmount = Amount.fromBTC(20).toValue()
   const hash = sha256.digest(Buffer.from('')).toString('hex')
   const fundingFee = 2330
   const commitmentFee = 14900
@@ -26,7 +26,7 @@ const WchTwr = require('./watchtower')
   // Funding TX
 
   const inCoin = new Coin({
-    value: aliceCoins + bobCoins + fundingFee,
+    value: aliceAmount + bobAmount + fundingFee,
     script: Script.fromPubkeyhash(rings[0].getAddress().hash), // TODO: make p2wpkh
     hash,
     index: 0,
@@ -37,7 +37,7 @@ const WchTwr = require('./watchtower')
     inCoin, ring: rings[0],
     fundKey1: rings[1].publicKey,
     fundKey2: rings[2].publicKey,
-    outCoins: aliceCoins + bobCoins
+    outAmount: aliceAmount + bobAmount
   })
 
   // Commitment TX
@@ -50,7 +50,7 @@ const WchTwr = require('./watchtower')
       wRevRing2: rings[4], bobDelRing: rings[7]
     },
     delays: {bobDelay: delay, aliceDelay: delay},
-    coins: {aliceCoins, bobCoins, fee: fundingFee},
+    amount: {aliceAmount, bobAmount, fee: fundingFee},
     prevout: Outpoint.fromTX(ftx, 0)
   })
 
