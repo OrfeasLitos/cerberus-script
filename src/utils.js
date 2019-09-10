@@ -7,8 +7,14 @@ const assert = require('bsert')
 const secp256k1 = bcrypto.secp256k1
 const Script = bcoin.script.Script
 const KeyRing = bcoin.primitives.KeyRing
+const MTX = bcoin.primitives.MTX
+const Coin = bcoin.primitives.Coin
 
 module.exports = {
+  mtxVerify: function (mtx) {
+    assert(MTX.isMTX(mtx), 'ftx must be an instance of MTX')
+  },
+
   ensureWitness: function (ring) {
     assert(KeyRing.isKeyRing(ring), 'Ring not an instance of KeyRing')
     assert(ring.witness, 'Ring must have the witness property true')
@@ -24,6 +30,10 @@ module.exports = {
 
   amountVerify: function (num) {
     assert(Number.isInteger(num) && (num > 0), 'Amount must be a positive integer in Satoshi')
+  },
+
+  coinVerify: function (coin) {
+    assert(Coin.isCoin(coin), 'Coin must be an instance of Coin')
   },
 
   sortKeys: function (key1, key2) {

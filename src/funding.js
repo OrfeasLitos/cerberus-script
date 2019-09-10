@@ -9,7 +9,21 @@ const MTX = bcoin.primitives.MTX
 const Script = bcoin.script.Script
 
 function interpretInput(args) {
-  // TODO
+  Utils.publicKeyVerify(args.fundKey1)
+  Utils.publicKeyVerify(args.fundKey2)
+
+  if (args.ftx !== undefined) {
+    Utils.mtxVerify(args.ftx)
+    Utils.coinVerify(args.amount)
+
+    return true // fromMTX
+  } else {
+    Utils.coinVerify(args.inCoin)
+    Utils.ensureWitness(args.ring)
+    Utils.amountVerify(args.outAmount)
+
+    return false
+  }
 }
 
 function addFundingOutput(ftx, fundKey1, fundKey2, amount) {
@@ -35,7 +49,7 @@ async function getFundingTXFromCoin({inCoin, ring, fundKey1, fundKey2, outAmount
 }
 
 async function getFundingTX(args) {
-  const fromMTX = false //interpretInput(args)
+  const fromMTX = interpretInput(args)
 
   return (fromMTX) ? getFundingTXFromMTX(args)
                    : await getFundingTXFromCoin(args)
