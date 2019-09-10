@@ -23,7 +23,7 @@ function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
   ) // TODO: discuss if equality desired
 }
 
-function getFundingCoin(prevout, ring, pubKey1, pubKey2, amount1, amount2, fee) {
+function getFundingCoin(prevout, ring, pubKey1, pubKey2, amount) {
   ring.script = Script.fromMultisig(2, 2,
     Utils.sortKeys(pubKey1, pubKey2)
   )
@@ -32,7 +32,7 @@ function getFundingCoin(prevout, ring, pubKey1, pubKey2, amount1, amount2, fee) 
   const txinfo = {
     hash: prevout.hash,
     index: prevout.index,
-    value: amount1 + amount2 + fee,
+    value: amount,
     script: script
   }
   return Coin.fromOptions(txinfo)
@@ -44,8 +44,8 @@ function getCommitmentOutput(colKey, watchKey, delay, delKey, amount) {
   return Utils.outputScrFromWitScr(witnessScript)
 }
 
-async function addCommitmentInput(ctx, prevout, ring, pubKey1, pubKey2, amount1, amount2, fee) {
-  const fundingCoin = getFundingCoin(prevout, ring, pubKey1, pubKey2, amount1, amount2, fee)
+async function addCommitmentInput(ctx, prevout, ring, pubKey1, pubKey2, amount) {
+  const fundingCoin = getFundingCoin(prevout, ring, pubKey1, pubKey2, amount)
   const changeAddress = ring.getAddress()
 
   await ctx.fund([fundingCoin], {changeAddress})
@@ -81,7 +81,7 @@ async function getCommitmentTX({
 
   await addCommitmentInput(
     ctx, prevout, aliceFundRing, aliceFundRing.publicKey,
-    bobFundRing.publicKey, aliceAmount, bobAmount, fee
+    bobFundRing.publicKey, aliceAmount + bobAmount + fee
   )
 
   return ctx
