@@ -26,33 +26,33 @@ function interpretInput(args) {
   }
 }
 
-function addFundingOutput(ftx, fundKey1, fundKey2, amount) {
+function addFundColOutput(ftx, fundKey1, fundKey2, amount) {
   const witnessScript = Script.fromMultisig(2, 2, [fundKey1, fundKey2])
   const outputScript = Utils.outputScrFromWitScr(witnessScript)
   ftx.addOutput(outputScript, amount)
 }
 
-function getFundingTXFromMTX({ftx, fundKey1, fundKey2, amount}) { // TODO: test
-  addFundingOutput(ftx, fundKey1, fundKey2, amount)
-  return ftx
+function getFundColTXFromMTX({ftx, fundKey1, fundKey2, amount}) { // TODO: test
+  addFundColOutput(ftx, fundKey1, fundKey2, amount)
+  return fctx
 }
 
-async function getFundingTXFromCoin({inCoin, ring, fundKey1, fundKey2, outAmount}) {
-  const ftx = new MTX()
-  addFundingOutput(ftx, fundKey1, fundKey2, outAmount)
+async function getFundColTXFromCoin({inCoin, ring, fundKey1, fundKey2, outAmount}) {
+  const fctx = new MTX()
+  addFundColOutput(fctx, fundKey1, fundKey2, outAmount)
   const changeAddress = ring.getAddress()
 
-  await ftx.fund([inCoin], {changeAddress})
-  ftx.scriptInput(0, inCoin, ring)
+  await fctx.fund([inCoin], {changeAddress})
+  fctx.scriptInput(0, inCoin, ring)
 
-  return ftx
+  return fctx
 }
 
-async function getFundingTX(args) {
+async function getFundColTX(args) {
   const fromMTX = interpretInput(args)
 
-  return (fromMTX) ? getFundingTXFromMTX(args)
-                   : await getFundingTXFromCoin(args)
+  return (fromMTX) ? getFundColTXFromMTX(args)
+                   : await getFundColTXFromCoin(args)
 }
 
-module.exports = getFundingTX
+module.exports = getFundColTX
