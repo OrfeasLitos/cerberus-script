@@ -6,10 +6,10 @@ const assert = require('bsert')
 const Scripts = require('./scripts')
 const Utils = require('./utils')
 
-const MTX = bcoin.primitives.MTX
-const Coin = bcoin.primitives.Coin
-const Input = bcoin.primitives.Input
-const Script = bcoin.script.Script
+const MTX = bcoin.MTX
+const Coin = bcoin.Coin
+const Input = bcoin.Input
+const Script = bcoin.Script
 
 function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
   Object.values(rings).map(Utils.ensureWitness)

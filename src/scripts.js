@@ -1,7 +1,7 @@
 'use strict'
 
 const bcoin = require('bcoin')
-const Script = bcoin.script.Script
+const Script = bcoin.Script
 
 const Scripts = {
   commScript: function (rev_key1, rev_key2, delay, del_key) {

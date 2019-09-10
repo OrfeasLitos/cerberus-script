@@ -4,11 +4,11 @@ const bcoin = require('bcoin')
 const sha256 = require('bcrypto/lib/sha256')
 const assert = require('bsert')
 
-const KeyRing = bcoin.primitives.KeyRing
-const Amount = bcoin.btc.Amount
-const Coin = bcoin.primitives.Coin
-const Script = bcoin.script.Script
-const Outpoint = bcoin.primitives.Outpoint
+const KeyRing = bcoin.KeyRing
+const Amount = bcoin.Amount
+const Coin = bcoin.Coin
+const Script = bcoin.Script
+const Outpoint = bcoin.Outpoint
 
 const WchTwr = require('./watchtower')
 

@@ -5,8 +5,8 @@ const assert = require('bsert')
 
 const Utils = require('./utils')
 
-const MTX = bcoin.primitives.MTX
-const Script = bcoin.script.Script
+const MTX = bcoin.MTX
+const Script = bcoin.Script
 
 function interpretInput(args) {
   Utils.publicKeyVerify(args.fundKey1)

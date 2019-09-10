@@ -5,10 +5,10 @@ const bcrypto = require('bcrypto')
 const assert = require('bsert')
 
 const secp256k1 = bcrypto.secp256k1
-const Script = bcoin.script.Script
-const KeyRing = bcoin.primitives.KeyRing
-const MTX = bcoin.primitives.MTX
-const Coin = bcoin.primitives.Coin
+const Script = bcoin.Script
+const KeyRing = bcoin.KeyRing
+const MTX = bcoin.MTX
+const Coin = bcoin.Coin
 
 module.exports = {
   mtxVerify: function (mtx) {
