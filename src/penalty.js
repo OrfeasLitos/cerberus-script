@@ -52,6 +52,7 @@ function getPenaltyTX({
   },
   bobDelay, commTX, colTX, fee
 }) {
+  // TODO: verify input
   const ptx = new MTX()
 
   const inFromCom = getPenaltyCommitmentInput(
