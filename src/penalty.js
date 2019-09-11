@@ -47,7 +47,7 @@ function getPenaltyOutput(ring) {
 function getPenaltyTX({
   rings: {
     bobPenaltyRing, bobDelRing,
-    bobComRing, wRevRing,
+    bobCommRing, wRevRing,
     bobColRing, wColRing
   },
   bobDelay, commTX, colTX, fee
@@ -55,7 +55,7 @@ function getPenaltyTX({
   const ptx = new MTX()
 
   const inFromCom = getPenaltyCommitmentInput(
-    commTX, bobComRing.publicKey, wRevRing.publicKey, bobDelay, bobDelRing.publicKey
+    commTX, bobCommRing.publicKey, wRevRing.publicKey, bobDelay, bobDelRing.publicKey
   )
   ptx.addInput(inFromCom)
 

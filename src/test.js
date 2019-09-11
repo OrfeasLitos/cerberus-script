@@ -84,7 +84,7 @@ const WchTwr = require('./watchtower')
   const ptx = WchTwr.getPenaltyTX({
     rings: {
       bobPenaltyRing: rings[8], bobDelRing: rings[7],
-      bobComRing: rings[6], wRevRing: rings[4],
+      bobCommRing: rings[6], wRevRing: rings[4],
       bobColRing: rings[10], wColRing: rings[11]
     },
     bobDelay: delay, commTX, colTX, fee: penaltyFee
