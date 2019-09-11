@@ -16,30 +16,47 @@ const WchTwr = require('./watchtower')
   const rings = Array.apply(null, Array(12))
         .map(x => KeyRing.generate())
   rings.map(ring => {ring.witness = true})
+
   const delay = 42
-  const aliceAmount = Amount.fromBTC(10).toValue()
-  const bobAmount = Amount.fromBTC(20).toValue()
+
   const fundingHash = sha256.digest(Buffer.from('funding')).toString('hex')
   const colHash = sha256.digest(Buffer.from('collateral')).toString('hex')
+
+  const aliceAmount = Amount.fromBTC(10).toValue()
+  const bobAmount = Amount.fromBTC(20).toValue()
   const colEpsilon = 40000
   const fundingColFee = 2330
   const commitmentFee = 14900
   const penaltyFee = 7512 // estimatesmartfee 313 or sth
 
+  const aliceOrigRing = rings[0]
+  const aliceFundRing = rings[1]
+  const bobFundRing = rings[2]
+  const aliceCommRing = rings[3]
+  const bobCommRing = rings[4]
+  const wRevRing1 = rings[5]
+  const wRevRing2 = rings[5]
+  const aliceDelRing = rings[6]
+  const bobDelRing = rings[7]
+  const bobPenaltyRing = rings[8]
+  const wOrigRing = rings[9]
+  const bobColRing = rings[10]
+  const wColRing = rings[11]
+
   // Funding TX
 
   const fundingInCoin = new Coin({
     value: aliceAmount + bobAmount + fundingColFee,
-    script: Script.fromPubkeyhash(rings[0].getAddress().hash), // TODO: make p2wpkh
+    script: Script.fromPubkeyhash(aliceOrigRing.getAddress().hash), // TODO: make p2wpkh
     hash: fundingHash,
     index: 0,
-    address: rings[0].getAddress()
+    address: aliceOrigRing.getAddress()
   })
 
   const ftx = await WchTwr.getFundingTX({
-    inCoin: fundingInCoin, ring: rings[0],
-    fundKey1: rings[1].publicKey,
-    fundKey2: rings[2].publicKey,
+    inCoin: fundingInCoin, ring: aliceOrigRing,
+    fundKey1: aliceFundRing.publicKey,
+    fundKey2: bobFundRing.publicKey,
     outAmount: aliceAmount + bobAmount
   })
 
@@ -47,10 +64,10 @@ const WchTwr = require('./watchtower')
 
   const commTX = await WchTwr.getCommitmentTX({
     rings: {
-      aliceFundRing: rings[1], bobFundRing: rings[2],
-      aliceCommRing: rings[3], wRevRing1: rings[4],
-      aliceDelRing: rings[5], bobCommRing: rings[6],
-      wRevRing2: rings[4], bobDelRing: rings[7]
+      aliceFundRing, bobFundRing,
+      aliceCommRing, wRevRing1,
+      aliceDelRing, bobCommRing,
+      wRevRing2, bobDelRing
     },
     delays: {bobDelay: delay, aliceDelay: delay},
     amount: {aliceAmount, bobAmount, fee: fundingColFee},
@@ -66,16 +83,16 @@ const WchTwr = require('./watchtower')
 
   const colInCoin = new Coin({
     value: aliceAmount + bobAmount + colEpsilon + fundingColFee,
-    script: Script.fromPubkeyhash(rings[9].getAddress().hash), // TODO: make p1wpkh
+    script: Script.fromPubkeyhash(wOrigRing.getAddress().hash), // TODO: make p1wpkh
     hash: colHash,
     index: 0,
-    address: rings[9].getAddress()
+    address: wOrigRing.getAddress()
   })
 
   const colTX = await WchTwr.getCollateralTX({
-    inCoin: colInCoin, ring: rings[9],
-    fundKey1: rings[10].publicKey,
-    fundKey2: rings[11].publicKey,
+    inCoin: colInCoin, ring: wOrigRing,
+    fundKey1: bobColRing.publicKey,
+    fundKey2: wColRing.publicKey,
     outAmount: aliceAmount + bobAmount + colEpsilon
   })
 
@@ -83,9 +100,9 @@ const WchTwr = require('./watchtower')
 
   const ptx = WchTwr.getPenaltyTX({
     rings: {
-      bobPenaltyRing: rings[8], bobDelRing: rings[7],
-      bobCommRing: rings[6], wRevRing: rings[4],
-      bobColRing: rings[10], wColRing: rings[11]
+      bobPenaltyRing, bobDelRing,
+      bobCommRing, wRevRing: wRevRing1,
+      bobColRing, wColRing
     },
     bobDelay: delay, commTX, colTX, fee: penaltyFee
   })
