@@ -57,5 +57,10 @@ module.exports = {
     res.compile()
 
     return res
+  },
+
+  getP2WPKHOutput: function (ring) {
+    const address = ring.getAddress()
+    return Script.fromAddress(address)
   }
 }

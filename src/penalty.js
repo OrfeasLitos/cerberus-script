@@ -41,8 +41,7 @@ function getPenaltyCollateralInput(colTX, bobColKey, wColKey) {
 }
 
 function getPenaltyOutput(ring) {
-  const address = ring.getAddress()
-  return Script.fromAddress(address)
+  return Utils.getP2WPKHOutput(ring)
 }
 
 function getPenaltyTX({
