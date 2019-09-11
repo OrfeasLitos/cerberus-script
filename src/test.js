@@ -13,7 +13,7 @@ const Outpoint = bcoin.Outpoint
 const WchTwr = require('./watchtower')
 
 ;(async () => {
-  const rings = Array.apply(null, Array(12))
+  const rings = Array.apply(null, Array(13))
         .map(x => KeyRing.generate())
   rings.map(ring => {ring.witness = true})
 
@@ -28,6 +28,7 @@ const WchTwr = require('./watchtower')
   const fundingColFee = 2330
   const commitmentFee = 14900
   const penaltyFee = 7512 // estimatesmartfee 313 or sth
+  const revocationFee = 8520
 
   const aliceOrigRing = rings[0]
   const aliceFundRing = rings[1]
@@ -42,6 +43,7 @@ const WchTwr = require('./watchtower')
   const wOrigRing = rings[9]
   const bobColRing = rings[10]
   const wColRing = rings[11]
+  const bobRevRing = rings[12]
 
   // Funding TX
 
@@ -117,8 +119,32 @@ const WchTwr = require('./watchtower')
   assert(colWitnessHash.equals(penaltyWitnessScriptForCol),
     'Collateral output witness hash doesn\'t correspond to penalty input witness script')
 
+  // Revocation TX
+
+  const rtx = WchTwr.getRevocationTX({
+    rings: {
+      aliceCommRing, bobCommRing, wRevRing1, wRevRing2,
+      aliceDelRing, bobDelRing, bobRevRing
+    },
+    delays: {
+      aliceDelay: delay, bobDelay: delay
+    },
+    commTX, fee: revocationFee
+  })
+
+  const aliceWitnessHash = commTX.outputs[0].script.code[1].data
+  const aliceWitnessScript = rtx.inputs[0].witness.getRedeem().sha256()
+  assert(aliceWitnessHash.equals(aliceWitnessScript),
+    'Alice output witness hash doesn\'t correspond to revocation input witness script')
+
+  const bobWitnessHash = commTX.outputs[1].script.code[1].data
+  const bobWitnessScript = rtx.inputs[1].witness.getRedeem().sha256()
+  assert(bobWitnessHash.equals(bobWitnessScript),
+    'Bob output witness hash doesn\'t correspond to revocation input witness script')
+
   console.log('Funding TX:\n', ftx, '\n')
   console.log('Commitment TX:\n', commTX, '\n')
   console.log('Collateral TX:\n', colTX, '\n')
   console.log('Penalty TX:\n', ptx, '\n')
+  console.log('Revocation TX:\n', rtx, '\n')
 })()
