@@ -54,6 +54,7 @@ function getPenaltyTX({
   bobDelay, commTX, colTX, fee
 }) {
   const ptx = new MTX()
+
   const inFromCom = getPenaltyCommitmentInput(
     commTX, bobComRing.publicKey, wRevRing.publicKey, bobDelay, bobDelRing.publicKey
   )
