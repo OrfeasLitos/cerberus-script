@@ -48,8 +48,8 @@ const WchTwr = require('./watchtower')
   const commTX = await WchTwr.getCommitmentTX({
     rings: {
       aliceFundRing: rings[1], bobFundRing: rings[2],
-      aliceColRing: rings[3], wRevRing1: rings[4],
-      aliceDelRing: rings[5], bobColRing: rings[6],
+      aliceCommRing: rings[3], wRevRing1: rings[4],
+      aliceDelRing: rings[5], bobCommRing: rings[6],
       wRevRing2: rings[4], bobDelRing: rings[7]
     },
     delays: {bobDelay: delay, aliceDelay: delay},
