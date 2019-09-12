@@ -9,6 +9,9 @@ const Amount = bcoin.Amount
 const Coin = bcoin.Coin
 const Script = bcoin.Script
 const Outpoint = bcoin.Outpoint
+const MTX = bcoin.MTX
+const Input = bcoin.Input
+const Witness = bcoin.Witness
 
 const WchTwr = require('./watchtower')
 
@@ -55,12 +58,29 @@ const WchTwr = require('./watchtower')
     address: aliceOrigRing.getAddress()
   })
 
-  const ftx = await WchTwr.getFundingTX({
+  const ftx1 = await WchTwr.getFundingTX({
     inCoin: fundingInCoin, ring: aliceOrigRing,
     fundKey1: aliceFundRing.publicKey,
     fundKey2: bobFundRing.publicKey,
     outAmount: aliceAmount + bobAmount
   })
+
+  let ftx2 = new MTX()
+
+  const p2wpkhScript = Script.fromPubkeyhash(aliceOrigRing.getAddress().hash)
+  const fundingInput = new Input({
+    prevout: new Outpoint(fundingHash, 0),
+    script: new Script(),
+    witness: Witness.fromStack({items: [p2wpkhScript.toRaw()]})
+  })
+  ftx2.addInput(fundingInput)
+
+  ftx2 = await WchTwr.getFundingTX({
+    fctx: ftx2, fundKey1: aliceFundRing.publicKey,
+    fundKey2: bobFundRing.publicKey, outAmount: aliceAmount + bobAmount
+  })
+
+  const ftx = ftx1
 
   // Commitment TX
 
