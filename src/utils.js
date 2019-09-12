@@ -69,8 +69,8 @@ module.exports = {
       'tx is not an instance of MTX')
     assert(tx.inputs.length === 1,
       'Collateral TX must have 1 input')
-    //assert(tx.inputs[0].getType() === 'witnesspubkeyhash', // TODO: make p2wpkh
-    //  'Collateral TX input must be of type pay to witness public key hash')
+    assert(tx.inputs[0].getSubtype() === 'witnesspubkeyhash',
+      'Collateral TX input must be of type pay to witness public key hash')
     assert(tx.outputs.length === 1,
       'Collateral TX must have 1 output')
     assert(tx.outputs[0].getType() === 'witnessscripthash',

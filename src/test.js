@@ -59,11 +59,10 @@ const WchTwr = require('./watchtower')
 
   let ftx2 = new MTX()
 
-  const p2wpkhScript = Script.fromPubkeyhash(aliceOrigRing.getAddress().hash)
   const fundingInput = new Input({
     prevout: new Outpoint(fundingHash, 0),
     script: new Script(),
-    witness: Witness.fromStack({items: [p2wpkhScript.toRaw()]})
+    witness: Witness.fromStack({items: [aliceOrigRing.getProgram().toRaw()]})
   })
   ftx2.addInput(fundingInput)
 

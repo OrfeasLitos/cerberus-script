@@ -29,6 +29,14 @@ function interpretInput(args) {
   }
 }
 
+function getFundColInput(outpoint, ring) {
+  return new Input({
+    prevout: outpoint,
+    script: new Script(),
+    witness: Witness.fromStack({items: [ring.getProgram().toRaw()]})
+  })
+}
+
 function getFundColOutput(fundKey1, fundKey2) {
   const witnessScript = Script.fromMultisig(2, 2, [fundKey1, fundKey2])
   return Utils.outputScrFromWitScr(witnessScript)
@@ -43,12 +51,7 @@ function getFundColTXFromMTX({fctx, fundKey1, fundKey2, outAmount}) {
 function getFundColTXFromRing({outpoint, ring, fundKey1, fundKey2, outAmount}) {
   const fctx = new MTX()
 
-  const script = Script.fromPubkeyhash(ring.getAddress().hash)
-  const input = new Input({
-    prevout: outpoint,
-    script: new Script(),
-    witness: Witness.fromStack({items: [script.toRaw()]})
-  })
+  const input = getFundColInput(outpoint, ring)
   fctx.addInput(input)
 
   const output = getFundColOutput(fundKey1, fundKey2)
