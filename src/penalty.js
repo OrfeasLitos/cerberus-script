@@ -11,6 +11,15 @@ const Script = bcoin.Script
 const Witness = bcoin.Witness
 const Input = bcoin.Input
 
+function verifyInput(rings, delay, commTX, colTX, fee) {
+  Object.values(rings).map(Utils.ensureWitness)
+  Object.values(rings).map(ring => Utils.publicKeyVerify(ring.publicKey))
+  Utils.delayVerify(delay)
+  Utils.ensureCommitmentTX(commTX)
+  Utils.ensureCollateralTX(colTX)
+  Utils.amountVerify(fee)
+}
+
 function getPenaltyCommitmentInput(commTX, bobRevKey, wRevKey, delay, delKey) {
   const prevout = Outpoint.fromTX(commTX, 1)
 
@@ -52,7 +61,8 @@ function getPenaltyTX({
   },
   bobDelay, commTX, colTX, fee
 }) {
-  // TODO: verify input
+  verifyInput(arguments[0].rings, bobDelay, commTX, colTX, fee)
+
   const ptx = new MTX()
 
   const inFromCom = getPenaltyCommitmentInput(
