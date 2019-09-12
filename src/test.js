@@ -79,7 +79,7 @@ const WchTwr = require('./watchtower')
 
   // Commitment TX
 
-  const commTX = await WchTwr.getCommitmentTX({
+  const commTX = WchTwr.getCommitmentTX({
     rings: {
       aliceFundRing, bobFundRing,
       aliceCommRing, wRevRing1,

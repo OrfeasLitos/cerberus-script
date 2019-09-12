@@ -10,6 +10,7 @@ const MTX = bcoin.MTX
 const Coin = bcoin.Coin
 const Input = bcoin.Input
 const Script = bcoin.Script
+const Witness = bcoin.Witness
 
 function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
   Object.values(rings).map(Utils.ensureWitness)
@@ -38,21 +39,22 @@ function getFundingCoin(prevout, ring, pubKey1, pubKey2, amount) {
   return Coin.fromOptions(txinfo)
 }
 
+function getInput(prevout, pubKey1, pubKey2, amount) {
+  const witnessScript = Script.fromMultisig(2, 2, [pubKey1, pubKey2])
+  return new Input({
+    prevout,
+    script: new Script(),
+    witness: Witness.fromStack({items: [witnessScript.toRaw()]})
+  })
+}
+
 function getOutput(commKey, watchKey, delay, delKey, amount) {
   const [key1, key2] = Utils.sortKeys(commKey, watchKey)
   const witnessScript = Scripts.commScript(key1, key2, delay, delKey)
   return Utils.outputScrFromWitScr(witnessScript)
 }
 
-async function addInput(ctx, prevout, ring, pubKey1, pubKey2, amount) {
-  const fundingCoin = getFundingCoin(prevout, ring, pubKey1, pubKey2, amount)
-  const changeAddress = ring.getAddress()
-
-  await ctx.fund([fundingCoin], {changeAddress})
-  ctx.scriptInput(0, fundingCoin, ring)
-}
-
-async function getCommitmentTX({
+function getCommitmentTX({
   rings: {
     aliceFundRing, bobFundRing, aliceCommRing,
     wRevRing1, aliceDelRing, bobCommRing,
@@ -67,6 +69,12 @@ async function getCommitmentTX({
 
   const ctx = new MTX()
 
+  const input = getInput(
+    prevout, aliceFundRing.publicKey,
+    bobFundRing.publicKey, aliceAmount + bobAmount + fee
+  )
+  ctx.addInput(input)
+
   const aliceOutput = getOutput(
     aliceCommRing.publicKey, wRevRing1.publicKey,
     bobDelay, aliceDelRing.publicKey
@@ -78,11 +86,6 @@ async function getCommitmentTX({
     aliceDelay, bobDelRing.publicKey
   )
   ctx.addOutput(bobOutput, bobAmount)
-
-  await addInput(
-    ctx, prevout, aliceFundRing, aliceFundRing.publicKey,
-    bobFundRing.publicKey, aliceAmount + bobAmount + fee
-  )
 
   return ctx
 }
