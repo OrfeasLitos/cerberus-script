@@ -9,6 +9,7 @@ const Script = bcoin.Script
 const KeyRing = bcoin.KeyRing
 const MTX = bcoin.MTX
 const Coin = bcoin.Coin
+const Outpoint = bcoin.Outpoint
 const Opcodes = bcoin.Opcodes
 
 const KEY_SIZE = 33
@@ -37,6 +38,10 @@ module.exports = {
 
   coinVerify: function (coin) {
     assert(Coin.isCoin(coin), 'Coin must be an instance of Coin')
+  },
+
+  outpointVerify: function (outpoint) {
+    assert(Outpoint.isOutpoint(outpoint), 'Outpoint must be an instance of Outpoint')
   },
 
   ensureCommitmentTX: function (tx) {

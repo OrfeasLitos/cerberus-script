@@ -7,6 +7,9 @@ const Utils = require('./utils')
 
 const MTX = bcoin.MTX
 const Script = bcoin.Script
+const Input = bcoin.Input
+const Outpoint = bcoin.Outpoint
+const Witness = bcoin.Witness
 
 function interpretInput(args) {
   Utils.publicKeyVerify(args.fundKey1)
@@ -18,7 +21,7 @@ function interpretInput(args) {
 
     return true // fromMTX
   } else {
-    Utils.coinVerify(args.inCoin)
+    Utils.outpointVerify(args.outpoint)
     Utils.ensureWitness(args.ring)
     Utils.amountVerify(args.outAmount)
 
@@ -37,23 +40,28 @@ function getFundColTXFromMTX({fctx, fundKey1, fundKey2, outAmount}) {
   return fctx
 }
 
-async function getFundColTXFromCoin({inCoin, ring, fundKey1, fundKey2, outAmount}) {
+function getFundColTXFromRing({outpoint, ring, fundKey1, fundKey2, outAmount}) {
   const fctx = new MTX()
+
+  const script = Script.fromPubkeyhash(ring.getAddress().hash)
+  const input = new Input({
+    prevout: outpoint,
+    script: new Script(),
+    witness: Witness.fromStack({items: [script.toRaw()]})
+  })
+  fctx.addInput(input)
+
   const output = getFundColOutput(fundKey1, fundKey2)
   fctx.addOutput(output, outAmount)
-  const changeAddress = ring.getAddress()
-
-  await fctx.fund([inCoin], {changeAddress})
-  fctx.scriptInput(0, inCoin, ring)
 
   return fctx
 }
 
-async function getFundColTX(args) {
+function getFundColTX(args) {
   const fromMTX = interpretInput(args)
 
   return (fromMTX) ? getFundColTXFromMTX(args)
-                   : await getFundColTXFromCoin(args)
+                   : getFundColTXFromRing(args)
 }
 
 module.exports = getFundColTX

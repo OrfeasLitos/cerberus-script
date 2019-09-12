@@ -6,7 +6,6 @@ const assert = require('bsert')
 
 const KeyRing = bcoin.KeyRing
 const Amount = bcoin.Amount
-const Coin = bcoin.Coin
 const Script = bcoin.Script
 const Outpoint = bcoin.Outpoint
 const MTX = bcoin.MTX
@@ -50,16 +49,9 @@ const WchTwr = require('./watchtower')
 
   // Funding TX
 
-  const fundingInCoin = new Coin({
-    value: aliceAmount + bobAmount + fundingColFee,
-    script: Script.fromPubkeyhash(aliceOrigRing.getAddress().hash), // TODO: make p2wpkh
-    hash: fundingHash,
-    index: 0,
-    address: aliceOrigRing.getAddress()
-  })
-
-  const ftx1 = await WchTwr.getFundingTX({
-    inCoin: fundingInCoin, ring: aliceOrigRing,
+  const ftx1 = WchTwr.getFundingTX({
+    outpoint: new Outpoint(fundingHash, 0),
+    ring: aliceOrigRing,
     fundKey1: aliceFundRing.publicKey,
     fundKey2: bobFundRing.publicKey,
     outAmount: aliceAmount + bobAmount
@@ -75,10 +67,14 @@ const WchTwr = require('./watchtower')
   })
   ftx2.addInput(fundingInput)
 
-  ftx2 = await WchTwr.getFundingTX({
+  ftx2 = WchTwr.getFundingTX({
     fctx: ftx2, fundKey1: aliceFundRing.publicKey,
     fundKey2: bobFundRing.publicKey, outAmount: aliceAmount + bobAmount
   })
+
+  assert(ftx1.hash().equals(ftx2.hash()) &&
+    ftx1.witnessHash().equals(ftx2.witnessHash()),
+    'The two funding-collateral TX generation methods do not produce same results')
 
   const ftx = ftx1
 
@@ -103,16 +99,9 @@ const WchTwr = require('./watchtower')
 
   // Collateral TX
 
-  const colInCoin = new Coin({
-    value: aliceAmount + bobAmount + colEpsilon + fundingColFee,
-    script: Script.fromPubkeyhash(wOrigRing.getAddress().hash), // TODO: make p1wpkh
-    hash: colHash,
-    index: 0,
-    address: wOrigRing.getAddress()
-  })
-
-  const colTX = await WchTwr.getCollateralTX({
-    inCoin: colInCoin, ring: wOrigRing,
+  const colTX = WchTwr.getCollateralTX({
+    outpoint: new Outpoint(colHash, 0),
+    ring: wOrigRing,
     fundKey1: bobColRing.publicKey,
     fundKey2: wColRing.publicKey,
     outAmount: aliceAmount + bobAmount + colEpsilon
