@@ -29,9 +29,9 @@ function interpretInput(args) {
   }
 }
 
-function getInput(outpoint, ring) {
+function getInput(prevout, ring) {
   return new Input({
-    prevout: outpoint,
+    prevout,
     script: new Script(),
     witness: Witness.fromStack({items: [ring.getProgram().toRaw()]})
   })
