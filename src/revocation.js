@@ -12,6 +12,14 @@ const Outpoint = bcoin.Outpoint
 const Witness = bcoin.Witness
 const Script = bcoin.Script
 
+function verifyInput(rings, delays, commTX, fee) {
+  Object.values(rings).map(Utils.ensureWitness)
+  Object.values(rings).map(ring => Utils.publicKeyVerify(ring.publicKey))
+  Object.values(delays).map(Utils.delayVerify)
+  Utils.ensureCommitmentTX(commTX)
+  Utils.amountVerify(fee)
+}
+
 function getRevocationInputs({
   aliceCommKey, bobCommKey, wRevKey1, wRevKey2,
   aliceDelKey, bobDelKey, aliceDelay, bobDelay,
@@ -58,7 +66,8 @@ function getRevocationTX({
     aliceDelay, bobDelay
   }, commTX, fee
 }) {
-  // TODO: verify input
+  verifyInput(arguments[0].rings, arguments[0].delays, commTX, fee)
+
   const rtx = new MTX()
 
   const [aliceInput, bobInput] = getRevocationInputs({
