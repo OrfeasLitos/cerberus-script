@@ -20,7 +20,7 @@ function verifyInput(rings, delays, commTX, fee) {
   Utils.amountVerify(fee)
 }
 
-function getRevocationInputs({
+function getInputs({
   aliceCommKey, bobCommKey, wRevKey1, wRevKey2,
   aliceDelKey, bobDelKey, aliceDelay, bobDelay,
   commTX
@@ -53,7 +53,7 @@ function getRevocationInputs({
   ]
 }
 
-function getRevocationOutput(ring) {
+function getOutput(ring) {
   return Utils.getP2WPKHOutput(ring)
 }
 
@@ -70,7 +70,7 @@ function getRevocationTX({
 
   const rtx = new MTX()
 
-  const [aliceInput, bobInput] = getRevocationInputs({
+  const [aliceInput, bobInput] = getInputs({
     aliceCommKey: aliceCommRing.publicKey, bobCommKey: bobCommRing.publicKey,
     wRevKey1: wRevRing1.publicKey, wRevKey2: wRevRing2.publicKey,
     aliceDelKey: aliceDelRing.publicKey, bobDelKey: bobDelRing.publicKey,
@@ -79,7 +79,7 @@ function getRevocationTX({
   rtx.addInput(aliceInput)
   rtx.addInput(bobInput)
 
-  const output = getRevocationOutput(bobRevRing)
+  const output = getOutput(bobRevRing)
   const value = commTX.outputs[0].value + commTX.outputs[1].value - fee
   rtx.addOutput(output, value)
 

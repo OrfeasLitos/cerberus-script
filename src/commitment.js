@@ -38,13 +38,13 @@ function getFundingCoin(prevout, ring, pubKey1, pubKey2, amount) {
   return Coin.fromOptions(txinfo)
 }
 
-function getCommitmentOutput(commKey, watchKey, delay, delKey, amount) {
+function getOutput(commKey, watchKey, delay, delKey, amount) {
   const [key1, key2] = Utils.sortKeys(commKey, watchKey)
   const witnessScript = Scripts.commScript(key1, key2, delay, delKey)
   return Utils.outputScrFromWitScr(witnessScript)
 }
 
-async function addCommitmentInput(ctx, prevout, ring, pubKey1, pubKey2, amount) {
+async function addInput(ctx, prevout, ring, pubKey1, pubKey2, amount) {
   const fundingCoin = getFundingCoin(prevout, ring, pubKey1, pubKey2, amount)
   const changeAddress = ring.getAddress()
 
@@ -67,19 +67,19 @@ async function getCommitmentTX({
 
   const ctx = new MTX()
 
-  const aliceOutput = getCommitmentOutput(
+  const aliceOutput = getOutput(
     aliceCommRing.publicKey, wRevRing1.publicKey,
     bobDelay, aliceDelRing.publicKey
   )
   ctx.addOutput(aliceOutput, aliceAmount)
 
-  const bobOutput = getCommitmentOutput(
+  const bobOutput = getOutput(
     bobCommRing.publicKey, wRevRing2.publicKey,
     aliceDelay, bobDelRing.publicKey
   )
   ctx.addOutput(bobOutput, bobAmount)
 
-  await addCommitmentInput(
+  await addInput(
     ctx, prevout, aliceFundRing, aliceFundRing.publicKey,
     bobFundRing.publicKey, aliceAmount + bobAmount + fee
   )
