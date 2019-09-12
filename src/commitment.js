@@ -21,7 +21,7 @@ function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
     Buffer.isBuffer(wRevRing1.publicKey)
     && wRevRing1.publicKey.equals(wRevRing2.publicKey),
     'watchtower revocation keys must be equal'
-  ) // TODO: discuss if equality desired
+  )
 }
 
 function getFundingCoin(prevout, ring, pubKey1, pubKey2, amount) {
