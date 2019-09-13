@@ -37,6 +37,7 @@ Like
       2
       OP_CHECKMULTISIG
   OP_ELSE
+      # Normal
       `bob_delay`
       OP_CHECKSEQUENCEVERIFY
       OP_DROP
@@ -61,6 +62,7 @@ Like
       2
       OP_CHECKMULTISIG
   OP_ELSE
+      # Normal
       `bob_delay`
       OP_CHECKSEQUENCEVERIFY
       OP_DROP
