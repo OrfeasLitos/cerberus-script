@@ -1,0 +1,11 @@
+{
+  "name": "cerberus-script",
+  "version": "1.0.0",
+  "description": "Specification and proof-of-concept implementation of Cerberus",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
