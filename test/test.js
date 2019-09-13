@@ -53,7 +53,7 @@ describe('End-to-end test', () => {
     fundKey1: aliceFundRing.publicKey,
     fundKey2: bobFundRing.publicKey,
     outAmount: aliceAmount + bobAmount
-  })
+  }) // TODO: can't use mtx.sign()...
 
   describe('Funding TX', () => {
     let ftx2 = new MTX()
