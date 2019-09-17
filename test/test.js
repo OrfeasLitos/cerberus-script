@@ -78,6 +78,7 @@ describe('End-to-end test', () => {
       fctx: ftx2, fundKey1: aliceFundRing.publicKey,
       fundKey2: bobFundRing.publicKey, outAmount: aliceAmount + bobAmount
     })
+
     ftx2.sign(aliceOrigRing)
 
     it('should be generatable both from MTX and from KeyRing', () => {
@@ -123,19 +124,29 @@ describe('End-to-end test', () => {
   })
 
   describe('Collateral TX', () => {
+    it('should verify correctly', () => {
+      assert(ftx.verify(),
+        'Collateral TX does not verify correctly')
+    })
+
     let colTX2 = new MTX()
 
-    const collateralInput = new Input({
-      prevout: new Outpoint(colHash, 0),
-      script: new Script(),
-      witness: Witness.fromStack({items: [wOrigRing.getProgram().toRaw()]})
-    })
-    colTX2.addInput(collateralInput)
+    colTX2.addCoin(Coin.fromJSON({
+      version: 1,
+      height: -1,
+      value: aliceAmount + bobAmount + colEpsilon,
+      coinbase: false,
+      script: wOrigRing.getProgram().toRaw().toString('hex'),
+      hash: colHash,
+      index: 0
+    }))
 
     colTX2 = WchTwr.getCollateralTX({
       fctx: colTX2, fundKey1: bobColRing.publicKey,
       fundKey2: wColRing.publicKey, outAmount: aliceAmount + bobAmount + colEpsilon
     })
+
+    colTX2.sign(wOrigRing)
 
     it('should be generatable both from MTX and from KeyRing', () => {
       assert(colTX.hash().equals(colTX2.hash()) &&
