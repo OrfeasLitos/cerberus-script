@@ -8,9 +8,7 @@ const Utils = require('./utils')
 
 const MTX = bcoin.MTX
 const Coin = bcoin.Coin
-const Input = bcoin.Input
 const Script = bcoin.Script
-const Witness = bcoin.Witness
 
 function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
   Object.values(rings).map(Utils.ensureWitness)
@@ -24,27 +22,15 @@ function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
   )
 }
 
-function getFundingCoin(prevout, ring, pubKey1, pubKey2, amount) {
-  ring.script = Script.fromMultisig(2, 2,
-    Utils.sortKeys(pubKey1, pubKey2)
-  )
-  const address = ring.getAddress()
-  const script = Script.fromAddress(address)
-  const txinfo = {
-    hash: prevout.hash,
-    index: prevout.index,
-    value: amount,
-    script: script
-  }
-  return Coin.fromOptions(txinfo)
-}
-
-function getInput(prevout, pubKey1, pubKey2, amount) {
-  const witnessScript = Script.fromMultisig(2, 2, [pubKey1, pubKey2])
-  return new Input({
-    prevout,
-    script: new Script(),
-    witness: Witness.fromStack({items: [witnessScript.toRaw()]})
+function getCoin(value, script, tx){
+  return Coin.fromJSON({
+    version: 1,
+    height: -1,
+    value,
+    coinbase: false,
+    script,
+    hash: tx.hash('hex'),
+    index: 0
   })
 }
 
@@ -62,19 +48,19 @@ function getCommitmentTX({
   },
   delays: {bobDelay, aliceDelay},
   amount: {aliceAmount, bobAmount, fee},
-  prevout
+  ftx
 }) {
   const arg = arguments[0]
   verifyInput(arg.rings, arg.delays, arg.amount, wRevRing1, wRevRing2)
 
-  const ctx = new MTX()
   const totalAmount = aliceAmount + bobAmount + fee
 
-  const input = getInput(
-    prevout, aliceFundRing.publicKey,
-    bobFundRing.publicKey, totalAmount
-  )
-  ctx.addInput(input)
+  aliceFundRing.script = bobFundRing.script = Script.fromMultisig(2, 2, [
+    aliceFundRing.publicKey, bobFundRing.publicKey
+  ])
+  const outputScript = Utils.outputScrFromWitScr(aliceFundRing.script)
+
+  let ctx = new MTX()
 
   const aliceOutput = getOutput(
     aliceCommRing.publicKey, wRevRing1.publicKey,
@@ -87,6 +73,11 @@ function getCommitmentTX({
     aliceDelay, bobDelRing.publicKey
   )
   ctx.addOutput(bobOutput, bobAmount)
+
+  const coin = getCoin(totalAmount, outputScript.toJSON(), ftx)
+  ctx.addCoin(coin)
+
+  ctx.sign([aliceFundRing, bobFundRing])
 
   return ctx
 }

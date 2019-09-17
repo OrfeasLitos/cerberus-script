@@ -86,10 +86,15 @@ describe('End-to-end test', () => {
     },
     delays: {bobDelay: delay, aliceDelay: delay},
     amount: {aliceAmount, bobAmount, fee: fundingColFee},
-    prevout: Outpoint.fromTX(ftx, 0)
+    ftx
   })
 
   describe('Commitment TX', () => {
+    it('should verify correctly', () => {
+      assert(commTX.verify(),
+        'Commitment TX does not verify correctly')
+    })
+
     const fundingWitnessHash = ftx.outputs[0].script.code[1].data
     const commWitnessScript = commTX.inputs[0].witness.getRedeem().sha256()
     it('should spend Funding TX', () => {
