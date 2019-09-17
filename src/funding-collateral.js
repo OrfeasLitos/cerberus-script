@@ -7,9 +7,7 @@ const Utils = require('./utils')
 
 const MTX = bcoin.MTX
 const Script = bcoin.Script
-const Input = bcoin.Input
-const Outpoint = bcoin.Outpoint
-const Witness = bcoin.Witness
+const Coin = bcoin.Coin
 
 function interpretInput(args) {
   Utils.publicKeyVerify(args.fundKey1)
@@ -29,11 +27,15 @@ function interpretInput(args) {
   }
 }
 
-function getInput(prevout, ring) {
-  return new Input({
-    prevout,
-    script: new Script(),
-    witness: Witness.fromStack({items: [ring.getProgram().toRaw()]})
+function getCoin(value, script, outpoint) {
+  return Coin.fromJSON({
+    version: 1,
+    height: -1,
+    value,
+    coinbase: false,
+    script,
+    hash: outpoint.hash,
+    index: outpoint.index
   })
 }
 
@@ -51,11 +53,14 @@ function getFundColTXFromMTX({fctx, fundKey1, fundKey2, outAmount}) {
 function getFundColTXFromRing({outpoint, ring, fundKey1, fundKey2, outAmount}) {
   const fctx = new MTX()
 
-  const input = getInput(outpoint, ring)
-  fctx.addInput(input)
-
   const output = getOutput(fundKey1, fundKey2)
   fctx.addOutput(output, outAmount)
+
+  const program = ring.getProgram().toRaw().toString('hex')
+  const coin = getCoin(outAmount, program, outpoint)
+  fctx.addCoin(coin)
+
+  fctx.sign(ring)
 
   return fctx
 }

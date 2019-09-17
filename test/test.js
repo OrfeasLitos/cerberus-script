@@ -11,6 +11,7 @@ const Outpoint = bcoin.Outpoint
 const MTX = bcoin.MTX
 const Input = bcoin.Input
 const Witness = bcoin.Witness
+const Coin = bcoin.Coin
 
 const WchTwr = require('../src/watchtower')
 
@@ -53,22 +54,31 @@ describe('End-to-end test', () => {
     fundKey1: aliceFundRing.publicKey,
     fundKey2: bobFundRing.publicKey,
     outAmount: aliceAmount + bobAmount
-  }) // TODO: can't use mtx.sign()...
+  })
 
   describe('Funding TX', () => {
+    it('should verify correctly', () => {
+      assert(ftx.verify(),
+        'Funding TX does not verify correctly')
+    })
+
     let ftx2 = new MTX()
 
-    const fundingInput = new Input({
-      prevout: new Outpoint(fundingHash, 0),
-      script: new Script(),
-      witness: Witness.fromStack({items: [aliceOrigRing.getProgram().toRaw()]})
-    })
-    ftx2.addInput(fundingInput)
+    ftx2.addCoin(Coin.fromJSON({
+      version: 1,
+      height: -1,
+      value: aliceAmount + bobAmount,
+      coinbase: false,
+      script: aliceOrigRing.getProgram().toRaw().toString('hex'),
+      hash: fundingHash,
+      index: 0
+    }))
 
     ftx2 = WchTwr.getFundingTX({
       fctx: ftx2, fundKey1: aliceFundRing.publicKey,
       fundKey2: bobFundRing.publicKey, outAmount: aliceAmount + bobAmount
     })
+    ftx2.sign(aliceOrigRing)
 
     it('should be generatable both from MTX and from KeyRing', () => {
       assert(ftx.hash().equals(ftx2.hash()) &&
