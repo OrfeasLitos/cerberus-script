@@ -68,10 +68,11 @@ function getCommitmentTX({
   verifyInput(arg.rings, arg.delays, arg.amount, wRevRing1, wRevRing2)
 
   const ctx = new MTX()
+  const totalAmount = aliceAmount + bobAmount + fee
 
   const input = getInput(
     prevout, aliceFundRing.publicKey,
-    bobFundRing.publicKey, aliceAmount + bobAmount + fee
+    bobFundRing.publicKey, totalAmount
   )
   ctx.addInput(input)
 
