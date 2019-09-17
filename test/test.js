@@ -107,6 +107,28 @@ describe('End-to-end test', () => {
     outAmount: aliceAmount + bobAmount + colEpsilon
   })
 
+  describe('Collateral TX', () => {
+    let colTX2 = new MTX()
+
+    const collateralInput = new Input({
+      prevout: new Outpoint(colHash, 0),
+      script: new Script(),
+      witness: Witness.fromStack({items: [wOrigRing.getProgram().toRaw()]})
+    })
+    colTX2.addInput(collateralInput)
+
+    colTX2 = WchTwr.getCollateralTX({
+      fctx: colTX2, fundKey1: bobColRing.publicKey,
+      fundKey2: wColRing.publicKey, outAmount: aliceAmount + bobAmount + colEpsilon
+    })
+
+    it('should be generatable both from MTX and from KeyRing', () => {
+      assert(colTX.hash().equals(colTX2.hash()) &&
+        colTX.witnessHash().equals(colTX2.witnessHash()),
+        'The two funding-collateral TX generation methods do not produce same results')
+    })
+  })
+
   const ptx = WchTwr.getPenaltyTX({
     rings: {
       bobPenaltyRing, bobDelRing,
