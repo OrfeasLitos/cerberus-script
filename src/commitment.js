@@ -22,7 +22,7 @@ function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
   )
 }
 
-function getCoin(value, script, tx){
+function getCoin(value, script, tx) {
   return Coin.fromJSON({
     version: 1,
     height: -1,
