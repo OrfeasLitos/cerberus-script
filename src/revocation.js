@@ -7,10 +7,9 @@ const Scripts = require('./scripts')
 const Utils = require('./utils')
 
 const MTX = bcoin.MTX
-const Input = bcoin.Input
-const Outpoint = bcoin.Outpoint
-const Witness = bcoin.Witness
 const Script = bcoin.Script
+const Coin = bcoin.Coin
+const Stack = bcoin.Stack
 
 function verifyInput(rings, delays, commTX, fee) {
   Object.values(rings).map(Utils.ensureWitness)
@@ -20,41 +19,32 @@ function verifyInput(rings, delays, commTX, fee) {
   Utils.amountVerify(fee)
 }
 
-function getInputs({
-  aliceCommKey, bobCommKey, wRevKey1, wRevKey2,
-  aliceDelKey, bobDelKey, aliceDelay, bobDelay,
-  commTX
-}) {
-  const [aliceInputKey1, aliceInputKey2] = Utils.sortKeys(aliceCommKey, wRevKey1)
-  const aliceWitnessScript = Scripts.commScript(
-    aliceInputKey1, aliceInputKey2,
-    bobDelay, aliceDelKey
-  )
-  const aliceWitness = Witness.fromStack({items: [aliceWitnessScript.toRaw()]})
-
-  const [bobInputKey1, bobInputKey2] = Utils.sortKeys(bobCommKey, wRevKey1)
-  const bobWitnessScript = Scripts.commScript(
-    bobInputKey1, bobInputKey2,
-    bobDelay, bobDelKey
-  )
-  const bobWitness = Witness.fromStack({items: [bobWitnessScript.toRaw()]})
-
-  return [
-    new Input({
-      prevout: Outpoint.fromTX(commTX, 0),
-      script: new Script(),
-      witness: aliceWitness
-    }),
-    new Input({
-      prevout: Outpoint.fromTX(commTX, 1),
-      script: new Script(),
-      witness: bobWitness
-    })
-  ]
+function getCoins(scripts, tx) {
+  return scripts.map((script, i) => Utils.getCoinFromTX(script, tx, i))
 }
 
 function getOutput(ring) {
   return Utils.getP2WPKHOutput(ring)
+}
+
+function sign(rtx, scripts, keys) {
+  [0, 1].map((index) => {
+    const {prevout} = rtx.inputs[index]
+    const value = rtx.view.getOutput(prevout).value
+
+    const sighashVersion = 1
+    const sigs = [0, 1].map((key) =>
+      rtx.signature(index, scripts[index], value, keys[index][key], null, sighashVersion)
+    )
+
+    let stack = new Stack()
+    stack.pushInt(0)
+    sigs.map((sig) => stack.pushData(sig))
+    stack.pushInt(1)
+    stack.push(scripts[index].toRaw())
+
+    rtx.inputs[index].witness.fromStack(stack)
+  })
 }
 
 function getRevocationTX({
@@ -68,20 +58,31 @@ function getRevocationTX({
 }) {
   verifyInput(arguments[0].rings, arguments[0].delays, commTX, fee)
 
-  const rtx = new MTX()
+  const [key1, key2] = Utils.sortKeys(aliceCommRing.publicKey, wRevRing1.publicKey)
+  aliceCommRing.script = Scripts.commScript(
+    key1, key2, bobDelay, aliceDelRing.publicKey
+  )
+  const outputScript1 = Utils.outputScrFromWitScr(aliceCommRing.script)
 
-  const [aliceInput, bobInput] = getInputs({
-    aliceCommKey: aliceCommRing.publicKey, bobCommKey: bobCommRing.publicKey,
-    wRevKey1: wRevRing1.publicKey, wRevKey2: wRevRing2.publicKey,
-    aliceDelKey: aliceDelRing.publicKey, bobDelKey: bobDelRing.publicKey,
-    aliceDelay, bobDelay, commTX
-  })
-  rtx.addInput(aliceInput)
-  rtx.addInput(bobInput)
+  const [key3, key4] = Utils.sortKeys(bobCommRing.publicKey, wRevRing2.publicKey)
+  bobCommRing.script = Scripts.commScript(
+    key3, key4, aliceDelay, bobDelRing.publicKey
+  )
+  const outputScript2 = Utils.outputScrFromWitScr(bobCommRing.script)
+
+  const rtx = new MTX({version: 2})
 
   const output = getOutput(bobRevRing)
   const value = commTX.outputs[0].value + commTX.outputs[1].value - fee
   rtx.addOutput(output, value)
+
+  const coins = getCoins([outputScript1.toJSON(), outputScript2.toJSON()], commTX)
+  coins.map((coin) => rtx.addCoin(coin))
+
+  sign(rtx, [aliceCommRing.script, bobCommRing.script], [
+    Utils.sortRings(aliceCommRing, wRevRing1).map((ring) => ring.privateKey),
+    Utils.sortRings(bobCommRing, wRevRing2).map((ring) => ring.privateKey)
+  ])
 
   return rtx
 }

@@ -197,6 +197,11 @@ describe('End-to-end test', () => {
   })
 
   describe('Revocation TX', () => {
+    it('should verify correctly', () => {
+      assert(rtx.verify(),
+        'Revocation TX does not verify correctly')
+    })
+
     const aliceWitnessHash = commTX.outputs[0].script.code[1].data
     const aliceWitnessScript = rtx.inputs[0].witness.getRedeem().sha256()
     it('should spend Commitment TX output 0', () => {

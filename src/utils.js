@@ -90,6 +90,11 @@ module.exports = {
     }
   },
 
+  sortRings: function (ring1, ring2) {
+    const [key1, key2] = this.sortKeys(ring1.publicKey, ring2.publicKey)
+    return (key1.equals(ring1.publicKey)) ? [ring1, ring2] : [ring2, ring1]
+  },
+
   outputScrFromWitScr: function (witnessScript) {
     const res = new Script()
 
