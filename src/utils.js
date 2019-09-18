@@ -103,5 +103,29 @@ module.exports = {
   getP2WPKHOutput: function (ring) {
     const address = ring.getAddress()
     return Script.fromAddress(address)
+  },
+
+  getCoinFromTX: function (script, tx, index) {
+    return Coin.fromJSON({
+      version: 2,
+      height: -1,
+      value: tx.outputs[index].value,
+      coinbase: false,
+      script,
+      hash: tx.hash('hex'),
+      index
+    })
+  },
+
+  getCoinFromOutpoint: function (value, script, outpoint) {
+    return Coin.fromJSON({
+      version: 2,
+      height: -1,
+      value,
+      coinbase: false,
+      script,
+      hash: outpoint.hash,
+      index: outpoint.index
+    })
   }
 }

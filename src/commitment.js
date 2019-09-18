@@ -22,18 +22,6 @@ function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
   )
 }
 
-function getCoin(value, script, tx) {
-  return Coin.fromJSON({
-    version: 2,
-    height: -1,
-    value,
-    coinbase: false,
-    script,
-    hash: tx.hash('hex'),
-    index: 0
-  })
-}
-
 function getOutput(commKey, watchKey, delay, delKey, amount) {
   const [key1, key2] = Utils.sortKeys(commKey, watchKey)
   const witnessScript = Scripts.commScript(key1, key2, delay, delKey)
@@ -74,7 +62,7 @@ function getCommitmentTX({
   )
   ctx.addOutput(bobOutput, bobAmount)
 
-  const coin = getCoin(totalAmount, outputScript.toJSON(), ftx)
+  const coin = Utils.getCoinFromTX(outputScript.toJSON(), ftx, 0)
   ctx.addCoin(coin)
 
   ctx.sign([aliceFundRing, bobFundRing])

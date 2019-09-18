@@ -19,30 +19,6 @@ function verifyInput(rings, delay, commTX, colTX, fee) {
   Utils.amountVerify(fee)
 }
 
-function getCommCoin(script, tx) {
-  return Coin.fromJSON({
-    version: 2,
-    height: -1,
-    value: tx.outputs[1].value,
-    coinbase: false,
-    script,
-    hash: tx.hash('hex'),
-    index: 1
-  })
-}
-
-function getColCoin(script, tx) {
-  return Coin.fromJSON({
-    version: 2,
-    height: -1,
-    value: tx.outputs[0].value,
-    coinbase: false,
-    script,
-    hash: tx.hash('hex'),
-    index: 0
-  })
-}
-
 function getOutput(ring) {
   return Utils.getP2WPKHOutput(ring)
 }
@@ -91,13 +67,13 @@ function getPenaltyTX({
   const value = commTX.outputs[1].value + colTX.outputs[0].value - fee
   ptx.addOutput(output, value)
 
-  const commCoin = getCommCoin(commOutputScript.toJSON(), commTX)
+  const commCoin = Utils.getCoinFromTX(commOutputScript.toJSON(), commTX, 1)
   ptx.addCoin(commCoin)
   // trick OP_CHECKSEQUENCEVERIFY
   // into thinking ptx is deep enough on-chain
   ptx.inputs[0].sequence = bobDelay
 
-  const colCoin = getColCoin(colOutputScript.toJSON(), colTX)
+  const colCoin = Utils.getCoinFromTX(colOutputScript.toJSON(), colTX, 0)
   ptx.addCoin(colCoin)
 
   // builtin TX.sign() only signs multisig input from colTX

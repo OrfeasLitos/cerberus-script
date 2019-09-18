@@ -27,18 +27,6 @@ function interpretInput(args) {
   }
 }
 
-function getCoin(value, script, outpoint) {
-  return Coin.fromJSON({
-    version: 2,
-    height: -1,
-    value,
-    coinbase: false,
-    script,
-    hash: outpoint.hash,
-    index: outpoint.index
-  })
-}
-
 function getOutput(fundKey1, fundKey2) {
   const witnessScript = Script.fromMultisig(2, 2, [fundKey1, fundKey2])
   return Utils.outputScrFromWitScr(witnessScript)
@@ -57,7 +45,7 @@ function getFundColTXFromRing({outpoint, ring, fundKey1, fundKey2, outAmount}) {
   fctx.addOutput(output, outAmount)
 
   const program = ring.getProgram().toRaw().toString('hex')
-  const coin = getCoin(outAmount, program, outpoint)
+  const coin = Utils.getCoinFromOutpoint(outAmount, program, outpoint)
   fctx.addCoin(coin)
 
   fctx.sign(ring)
