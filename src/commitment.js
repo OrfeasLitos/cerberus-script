@@ -24,7 +24,7 @@ function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
 
 function getCoin(value, script, tx) {
   return Coin.fromJSON({
-    version: 1,
+    version: 2,
     height: -1,
     value,
     coinbase: false,
@@ -60,7 +60,7 @@ function getCommitmentTX({
   ])
   const outputScript = Utils.outputScrFromWitScr(aliceFundRing.script)
 
-  let ctx = new MTX()
+  let ctx = new MTX({version: 2})
 
   const aliceOutput = getOutput(
     aliceCommRing.publicKey, wRevRing1.publicKey,

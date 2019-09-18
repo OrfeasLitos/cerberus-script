@@ -29,7 +29,7 @@ function interpretInput(args) {
 
 function getCoin(value, script, outpoint) {
   return Coin.fromJSON({
-    version: 1,
+    version: 2,
     height: -1,
     value,
     coinbase: false,
@@ -51,7 +51,7 @@ function getFundColTXFromMTX({fctx, fundKey1, fundKey2, outAmount}) {
 }
 
 function getFundColTXFromRing({outpoint, ring, fundKey1, fundKey2, outAmount}) {
-  const fctx = new MTX()
+  const fctx = new MTX({version: 2})
 
   const output = getOutput(fundKey1, fundKey2)
   fctx.addOutput(output, outAmount)

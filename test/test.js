@@ -62,10 +62,10 @@ describe('End-to-end test', () => {
         'Funding TX does not verify correctly')
     })
 
-    let ftx2 = new MTX()
+    let ftx2 = new MTX({version: 2})
 
     ftx2.addCoin(Coin.fromJSON({
-      version: 1,
+      version: 2,
       height: -1,
       value: aliceAmount + bobAmount,
       coinbase: false,
@@ -129,10 +129,10 @@ describe('End-to-end test', () => {
         'Collateral TX does not verify correctly')
     })
 
-    let colTX2 = new MTX()
+    let colTX2 = new MTX({version: 2})
 
     colTX2.addCoin(Coin.fromJSON({
-      version: 1,
+      version: 2,
       height: -1,
       value: aliceAmount + bobAmount + colEpsilon,
       coinbase: false,
@@ -165,6 +165,11 @@ describe('End-to-end test', () => {
   })
 
   describe('Penalty TX', () => {
+    it('should verify correctly', () => {
+      assert(ptx.verify(),
+        'Penalty TX does not verify correctly')
+    })
+
     const commWitnessHash = commTX.outputs[1].script.code[1].data
     const penaltyWitnessScriptForComm = ptx.inputs[0].witness.getRedeem().sha256()
     it('should spend Commitment TX output 1', () => {
