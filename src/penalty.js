@@ -26,11 +26,11 @@ function getOutput(ring) {
 function signCommInput(ptx, ring) {
   const inputIndex = 0
   const {prevout} = ptx.inputs[inputIndex]
-  const coin = ptx.view.getOutput(prevout)
+  const value = ptx.view.getOutput(prevout).value
 
   const sighashVersion = 1
   const sig = ptx.signature(
-    inputIndex, ring.script, coin.value, ring.privateKey, null, sighashVersion
+    inputIndex, ring.script, value, ring.privateKey, null, sighashVersion
   )
   let stack = new Stack()
   stack.pushData(sig)
