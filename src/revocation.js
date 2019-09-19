@@ -11,7 +11,7 @@ const Script = bcoin.Script
 const Coin = bcoin.Coin
 const Stack = bcoin.Stack
 
-function verifyInput(rings, delays, commTX, fee) {
+function verifyArgs(rings, delays, commTX, fee) {
   Object.values(rings).map(Utils.ensureWitness)
   Object.values(rings).map(ring => Utils.publicKeyVerify(ring.publicKey))
   Object.values(delays).map(Utils.delayVerify)
@@ -56,7 +56,7 @@ function getRevocationTX({
     aliceDelay, bobDelay
   }, commTX, fee
 }) {
-  verifyInput(arguments[0].rings, arguments[0].delays, commTX, fee)
+  verifyArgs(arguments[0].rings, arguments[0].delays, commTX, fee)
 
   const [key1, key2] = Utils.sortKeys(aliceCommRing.publicKey, wRevRing1.publicKey)
   aliceCommRing.script = Scripts.commScript(

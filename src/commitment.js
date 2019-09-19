@@ -10,7 +10,7 @@ const MTX = bcoin.MTX
 const Coin = bcoin.Coin
 const Script = bcoin.Script
 
-function verifyInput(rings, delays, amounts, wRevRing1, wRevRing2) {
+function verifyArgs(rings, delays, amounts, wRevRing1, wRevRing2) {
   Object.values(rings).map(Utils.ensureWitness)
   Object.values(rings).map(ring => Utils.publicKeyVerify(ring.publicKey))
   Object.values(delays).map(Utils.delayVerify)
@@ -39,7 +39,7 @@ function getCommitmentTX({
   ftx
 }) {
   const arg = arguments[0]
-  verifyInput(arg.rings, arg.delays, arg.amount, wRevRing1, wRevRing2)
+  verifyArgs(arg.rings, arg.delays, arg.amount, wRevRing1, wRevRing2)
 
   const totalAmount = aliceAmount + bobAmount + fee
 
