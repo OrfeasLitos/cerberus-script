@@ -3,6 +3,13 @@
 Bitcoin script for "Cerberus - Incentivizing Watchtowers", implemented with the
 [bcoin.js](https://github.com/bcoin-org/bcoin/) library.
 
+How to setup and verify the implementation:
+1. Clone this repository
+1. go to the top directory of the repository
+1. `npm install` (assumes a working `npm` and `nodejs` installation. nodejs v12 is not yet
+   supported due to limitations of the `bcoin` library.)
+1. `npm test`
+
 Let channel between Alice (with funds `a`) and Bob (with funds `b`). Bob employs
 watchtower W. All scripts are P2WSH.
 
