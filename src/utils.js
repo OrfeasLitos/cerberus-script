@@ -70,11 +70,11 @@ module.exports = {
     assert(tx.inputs.length === 1,
       'Collateral TX must have 1 input')
     assert(tx.inputs[0].getType() === 'witnesspubkeyhash',
-      'Collateral TX input must be of type pay to witness public key hash')
+      'Collateral TX input must be of type P2WPKH')
     assert(tx.outputs.length === 1,
       'Collateral TX must have 1 output')
     assert(tx.outputs[0].getType() === 'witnessscripthash',
-      'Collateral TX output must be P2SH')
+      'Collateral TX output must be of type P2WSH')
   },
 
   sortKeys: function (key1, key2) {
