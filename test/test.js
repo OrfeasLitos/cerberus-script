@@ -15,11 +15,12 @@ const Coin = bcoin.Coin
 
 const WchTwr = require('../src/watchtower')
 
-const rings = Array.apply(null, Array(13))
+const rings = Array.apply(null, Array(15))
       .map(x => KeyRing.generate())
 rings.map(ring => {ring.witness = true})
 
-const delay = 42
+const shortDelay = 42
+const longDelay = 420
 
 const fundingHash = sha256.digest(Buffer.from('funding')).toString('hex')
 const colHash = sha256.digest(Buffer.from('collateral')).toString('hex')
@@ -31,6 +32,7 @@ const fundingColFee = 2330
 const commitmentFee = 14900
 const penaltyFee = 7512 // estimatesmartfee 313 or sth
 const revocationFee = 8520
+const claimFee = 5000
 
 const aliceOrigRing = rings[0]
 const aliceFundRing = rings[1]
@@ -38,14 +40,16 @@ const bobFundRing = rings[2]
 const aliceRevRing = rings[3]
 const bobRevRing = rings[4]
 const wRevRing1 = rings[5]
-const wRevRing2 = rings[5]
+const wRevRing2 = KeyRing.fromPrivate(wRevRing1.privateKey)
+wRevRing2.witness = true
 const aliceDelRing = rings[6]
 const bobDelRing = rings[7]
-const bobOwnRing = rings[8]
-const wOrigRing = rings[9]
-const bobColRing = rings[10]
-const wColRing = rings[11]
-const bobRevRing = rings[12]
+const bobPenaltyRing = rings[8]
+const wPenaltyRing = rings[9]
+const bobOwnRing = rings[10]
+const wOrigRing = rings[11]
+const bobColRing = rings[12]
+const wColRing = rings[13]
 
 describe('End-to-end test', () => {
   const ftx = WchTwr.getFundingTX({
@@ -95,7 +99,7 @@ describe('End-to-end test', () => {
       aliceDelRing, bobRevRing,
       wRevRing2, bobDelRing
     },
-    delays: {bobDelay: delay, aliceDelay: delay},
+    delays: {bobDelay: shortDelay, aliceDelay: shortDelay},
     amount: {aliceAmount, bobAmount, fee: fundingColFee},
     ftx
   })
@@ -155,13 +159,37 @@ describe('End-to-end test', () => {
     })
   })
 
+  const claimTX = WchTwr.getClaimTX({
+    rings: {
+      bobColRing, wColRing,
+      bobPenaltyRing, wPenaltyRing
+    },
+    delays: {shortDelay, longDelay},
+    colTX, fee: claimFee
+  })
+
+  describe('Claim TX', () => {
+    it('should verify correctly', () => {
+      assert(claimTX.verify(),
+        'Claim TX does not verify correctly')
+    })
+
+    const colWitnessHash = colTX.outputs[0].script.code[1].data
+    const claimWitnessScriptForCol = claimTX.inputs[0].witness.getRedeem().sha256()
+    it('should spend Collateral TX', () => {
+      assert(colWitnessHash.equals(claimWitnessScriptForCol),
+        'Collateral output witness hash doesn\'t correspond to claim input witness script')
+    })
+  })
+
   const ptx = WchTwr.getPenaltyTX({
     rings: {
       bobOwnRing, bobDelRing,
       bobRevRing, wRevRing: wRevRing1,
-      bobColRing, wColRing
+      bobPenaltyRing, wPenaltyRing
     },
-    bobDelay: delay, commTX, colTX, fee: penaltyFee
+    delays: {shortDelay, longDelay, bobDelay: shortDelay},
+    commTX, claimTX, fee: penaltyFee
   })
 
   describe('Penalty TX', () => {
@@ -177,11 +205,11 @@ describe('End-to-end test', () => {
         'Commitment output witness hash doesn\'t correspond to penalty input witness script')
     })
 
-    const colWitnessHash = colTX.outputs[0].script.code[1].data
-    const penaltyWitnessScriptForCol = ptx.inputs[1].witness.getRedeem().sha256()
-    it('should spend Collateral TX', () => {
-      assert(colWitnessHash.equals(penaltyWitnessScriptForCol),
-        'Collateral output witness hash doesn\'t correspond to penalty input witness script')
+    const claimWitnessHash = claimTX.outputs[0].script.code[1].data
+    const penaltyWitnessScriptForClaim = ptx.inputs[1].witness.getRedeem().sha256()
+    it('should spend Claim TX', () => {
+      assert(claimWitnessHash.equals(penaltyWitnessScriptForClaim),
+        'Claim output witness hash doesn\'t correspond to penalty input witness script')
     })
   })
 
@@ -190,9 +218,7 @@ describe('End-to-end test', () => {
       aliceRevRing, bobRevRing, wRevRing1, wRevRing2,
       aliceDelRing, bobDelRing, bobOwnRing
     },
-    delays: {
-      aliceDelay: delay, bobDelay: delay
-    },
+    delays: {aliceDelay: shortDelay, bobDelay: shortDelay},
     commTX, fee: revocationFee
   })
 

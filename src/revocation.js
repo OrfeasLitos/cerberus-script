@@ -27,26 +27,6 @@ function getOutput(ring) {
   return Utils.getP2WPKHOutput(ring)
 }
 
-function sign(rtx, scripts, keys) {
-  [0, 1].map((index) => {
-    const {prevout} = rtx.inputs[index]
-    const value = rtx.view.getOutput(prevout).value
-
-    const sighashVersion = 1
-    const sigs = [0, 1].map((key) =>
-      rtx.signature(index, scripts[index], value, keys[index][key], null, sighashVersion)
-    )
-
-    let stack = new Stack()
-    stack.pushInt(0)
-    sigs.map((sig) => stack.pushData(sig))
-    stack.pushInt(1)
-    stack.push(scripts[index].toRaw())
-
-    rtx.inputs[index].witness.fromStack(stack)
-  })
-}
-
 function getRevocationTX({
   rings: {
     aliceRevRing, bobRevRing, wRevRing1, wRevRing2,
@@ -59,13 +39,13 @@ function getRevocationTX({
   verifyArgs(arguments[0].rings, arguments[0].delays, commTX, fee)
 
   const [key1, key2] = Utils.sortKeys(aliceRevRing.publicKey, wRevRing1.publicKey)
-  aliceRevRing.script = Scripts.commScript(
+  aliceRevRing.script = wRevRing1.script = Scripts.commScript(
     key1, key2, bobDelay, aliceDelRing.publicKey
   )
   const outputScript1 = Utils.outputScrFromRedeemScr(aliceRevRing.script)
 
   const [key3, key4] = Utils.sortKeys(bobRevRing.publicKey, wRevRing2.publicKey)
-  bobRevRing.script = Scripts.commScript(
+  bobRevRing.script = wRevRing2.script = Scripts.commScript(
     key3, key4, aliceDelay, bobDelRing.publicKey
   )
   const outputScript2 = Utils.outputScrFromRedeemScr(bobRevRing.script)
@@ -79,10 +59,8 @@ function getRevocationTX({
   const coins = getCoins([outputScript1.toJSON(), outputScript2.toJSON()], commTX)
   coins.map((coin) => rtx.addCoin(coin))
 
-  sign(rtx, [aliceRevRing.script, bobRevRing.script], [
-    Utils.sortRings(aliceRevRing, wRevRing1).map((ring) => ring.privateKey),
-    Utils.sortRings(bobRevRing, wRevRing2).map((ring) => ring.privateKey)
-  ])
+  Utils.sign(rtx, Utils.sortRings(aliceRevRing, wRevRing1), 0, Scripts.cheatWitScr)
+  Utils.sign(rtx, Utils.sortRings(bobRevRing, wRevRing2), 1, Scripts.cheatWitScr)
 
   return rtx
 }

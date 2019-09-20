@@ -11,6 +11,7 @@ const MTX = bcoin.MTX
 const Coin = bcoin.Coin
 const Outpoint = bcoin.Outpoint
 const Opcodes = bcoin.Opcodes
+const Stack = bcoin.Stack
 
 const KEY_SIZE = 33
 
@@ -62,6 +63,19 @@ module.exports = {
       'Commitment TX must have 2 outputs')
     assert(tx.outputs.every(output => output.getType() === 'witnessscripthash'),
       'Commitment TX outputs must be P2SH')
+  },
+
+  ensureClaimTX: function (tx) {
+    assert(MTX.isMTX(tx),
+      'tx is not an instance of MTX')
+    assert(tx.inputs.length === 1,
+      'Claim TX must have 1 input')
+    assert(tx.inputs[0].getType() === 'witnessscripthash',
+      'Claim TX input must be of type P2WSH')
+    assert(tx.outputs.length === 1,
+      'Claim TX must have 1 output')
+    assert(tx.outputs[0].getType() === 'witnessscripthash',
+      'Claim TX output must be of type P2WSH')
   },
 
   ensureCollateralTX: function (tx) {
@@ -132,5 +146,37 @@ module.exports = {
       hash: outpoint.hash,
       index: outpoint.index
     })
+  },
+
+  sign: function (tx, rings, index, witnessScript) {
+    const SIGHASH_VERSION = 1
+
+    function pushSigs(witnessScript, sigs) {
+      let sigsInd = 0
+      const stack = new Stack()
+
+      witnessScript.map((op, i) => {
+        if (Number.isInteger(op)) {
+          stack.pushInt(op)
+        } else {
+          stack.pushData(sigs[sigsInd])
+          sigsInd++
+        }
+      })
+
+      return stack
+    }
+
+    const {prevout} = tx.inputs[index]
+    const value = tx.view.getOutput(prevout).value
+
+    const sigs = rings.map((ring) =>
+      tx.signature(index, ring.script, value, ring.privateKey, null, SIGHASH_VERSION)
+    )
+
+    const stack = pushSigs(witnessScript, sigs)
+    stack.push(rings[0].script.toRaw())
+
+    tx.inputs[index].witness.fromStack(stack)
   }
 }
