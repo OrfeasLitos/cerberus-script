@@ -30,8 +30,8 @@ function getOutput(commKey, watchKey, delay, delKey, amount) {
 
 function getCommitmentTX({
   rings: {
-    aliceFundRing, bobFundRing, aliceCommRing,
-    wRevRing1, aliceDelRing, bobCommRing,
+    aliceFundRing, bobFundRing, aliceRevRing,
+    wRevRing1, aliceDelRing, bobRevRing,
     wRevRing2, bobDelRing
   },
   delays: {bobDelay, aliceDelay},
@@ -51,13 +51,13 @@ function getCommitmentTX({
   let ctx = new MTX({version: 2})
 
   const aliceOutput = getOutput(
-    aliceCommRing.publicKey, wRevRing1.publicKey,
+    aliceRevRing.publicKey, wRevRing1.publicKey,
     bobDelay, aliceDelRing.publicKey
   )
   ctx.addOutput(aliceOutput, aliceAmount)
 
   const bobOutput = getOutput(
-    bobCommRing.publicKey, wRevRing2.publicKey,
+    bobRevRing.publicKey, wRevRing2.publicKey,
     aliceDelay, bobDelRing.publicKey
   )
   ctx.addOutput(bobOutput, bobAmount)

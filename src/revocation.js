@@ -49,8 +49,8 @@ function sign(rtx, scripts, keys) {
 
 function getRevocationTX({
   rings: {
-    aliceCommRing, bobCommRing, wRevRing1, wRevRing2,
-    aliceDelRing, bobDelRing, bobRevRing
+    aliceRevRing, bobRevRing, wRevRing1, wRevRing2,
+    aliceDelRing, bobDelRing, bobOwnRing
   },
   delays: {
     aliceDelay, bobDelay
@@ -58,30 +58,30 @@ function getRevocationTX({
 }) {
   verifyArgs(arguments[0].rings, arguments[0].delays, commTX, fee)
 
-  const [key1, key2] = Utils.sortKeys(aliceCommRing.publicKey, wRevRing1.publicKey)
-  aliceCommRing.script = Scripts.commScript(
+  const [key1, key2] = Utils.sortKeys(aliceRevRing.publicKey, wRevRing1.publicKey)
+  aliceRevRing.script = Scripts.commScript(
     key1, key2, bobDelay, aliceDelRing.publicKey
   )
-  const outputScript1 = Utils.outputScrFromWitScr(aliceCommRing.script)
+  const outputScript1 = Utils.outputScrFromWitScr(aliceRevRing.script)
 
-  const [key3, key4] = Utils.sortKeys(bobCommRing.publicKey, wRevRing2.publicKey)
-  bobCommRing.script = Scripts.commScript(
+  const [key3, key4] = Utils.sortKeys(bobRevRing.publicKey, wRevRing2.publicKey)
+  bobRevRing.script = Scripts.commScript(
     key3, key4, aliceDelay, bobDelRing.publicKey
   )
-  const outputScript2 = Utils.outputScrFromWitScr(bobCommRing.script)
+  const outputScript2 = Utils.outputScrFromWitScr(bobRevRing.script)
 
   const rtx = new MTX({version: 2})
 
-  const output = getOutput(bobRevRing)
+  const output = getOutput(bobComRing)
   const value = commTX.outputs[0].value + commTX.outputs[1].value - fee
   rtx.addOutput(output, value)
 
   const coins = getCoins([outputScript1.toJSON(), outputScript2.toJSON()], commTX)
   coins.map((coin) => rtx.addCoin(coin))
 
-  sign(rtx, [aliceCommRing.script, bobCommRing.script], [
-    Utils.sortRings(aliceCommRing, wRevRing1).map((ring) => ring.privateKey),
-    Utils.sortRings(bobCommRing, wRevRing2).map((ring) => ring.privateKey)
+  sign(rtx, [aliceRevRing.script, bobRevRing.script], [
+    Utils.sortRings(aliceRevRing, wRevRing1).map((ring) => ring.privateKey),
+    Utils.sortRings(bobRevRing, wRevRing2).map((ring) => ring.privateKey)
   ])
 
   return rtx

@@ -35,13 +35,13 @@ const revocationFee = 8520
 const aliceOrigRing = rings[0]
 const aliceFundRing = rings[1]
 const bobFundRing = rings[2]
-const aliceCommRing = rings[3]
-const bobCommRing = rings[4]
+const aliceRevRing = rings[3]
+const bobRevRing = rings[4]
 const wRevRing1 = rings[5]
 const wRevRing2 = rings[5]
 const aliceDelRing = rings[6]
 const bobDelRing = rings[7]
-const bobPenaltyRing = rings[8]
+const bobOwnRing = rings[8]
 const wOrigRing = rings[9]
 const bobColRing = rings[10]
 const wColRing = rings[11]
@@ -91,8 +91,8 @@ describe('End-to-end test', () => {
   const commTX = WchTwr.getCommitmentTX({
     rings: {
       aliceFundRing, bobFundRing,
-      aliceCommRing, wRevRing1,
-      aliceDelRing, bobCommRing,
+      aliceRevRing, wRevRing1,
+      aliceDelRing, bobRevRing,
       wRevRing2, bobDelRing
     },
     delays: {bobDelay: delay, aliceDelay: delay},
@@ -157,8 +157,8 @@ describe('End-to-end test', () => {
 
   const ptx = WchTwr.getPenaltyTX({
     rings: {
-      bobPenaltyRing, bobDelRing,
-      bobCommRing, wRevRing: wRevRing1,
+      bobOwnRing, bobDelRing,
+      bobRevRing, wRevRing: wRevRing1,
       bobColRing, wColRing
     },
     bobDelay: delay, commTX, colTX, fee: penaltyFee
@@ -187,8 +187,8 @@ describe('End-to-end test', () => {
 
   const rtx = WchTwr.getRevocationTX({
     rings: {
-      aliceCommRing, bobCommRing, wRevRing1, wRevRing2,
-      aliceDelRing, bobDelRing, bobRevRing
+      aliceRevRing, bobRevRing, wRevRing1, wRevRing2,
+      aliceDelRing, bobDelRing, bobOwnRing
     },
     delays: {
       aliceDelay: delay, bobDelay: delay

@@ -114,7 +114,7 @@ Like
       # Normal
       `long_delay`
       OP_CHECKSEQUENCEVERIFY
-      <watchtower_pubkey>
+      <watchtower_penalty_pubkey>
       OP_CHECKSIG
   OP_ENDIF
   ```

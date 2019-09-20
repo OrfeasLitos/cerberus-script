@@ -42,15 +42,15 @@ function signCommInput(ptx, ring) {
 
 function getPenaltyTX({
   rings: {
-    bobPenaltyRing, bobDelRing,
-    bobCommRing, wRevRing,
+    bobOwnRing, bobDelRing,
+    bobRevRing, wRevRing,
     bobColRing, wColRing
   },
   bobDelay, commTX, colTX, fee
 }) {
   verifyArgs(arguments[0].rings, bobDelay, commTX, colTX, fee)
 
-  const [key1, key2] = Utils.sortKeys(bobCommRing.publicKey, wRevRing.publicKey)
+  const [key1, key2] = Utils.sortKeys(bobRevRing.publicKey, wRevRing.publicKey)
   bobDelRing.script = Scripts.commScript(
     key1, key2, bobDelay, bobDelRing.publicKey
   )
@@ -63,7 +63,7 @@ function getPenaltyTX({
 
   const ptx = new MTX({version: 2})
 
-  const output = getOutput(bobPenaltyRing)
+  const output = getOutput(bobOwnRing)
   const value = commTX.outputs[1].value + colTX.outputs[0].value - fee
   ptx.addOutput(output, value)
 
