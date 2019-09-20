@@ -91,11 +91,42 @@ Like
   * value: `a + b`
   * script: P2WPKH to `<bob_pubkey>`
 
+## Claim transaction (off-chain for an open channel)
+
+* unique input spends the output of a Collateral tx, with scriptSig (?) `0 <collateral_sig1>
+  <collateral_sig2>`.
+* unique output:
+  * value: `a + b + ε`
+  * script:
+  ```
+  OP_IF
+      # Penalty
+      `bob_delay`
+      OP_CHECKSEQUENCEVERIFY
+      OP_DROP
+      2
+      <penalty_pubkey1>
+      <penalty_pubkey2>
+      2
+      OP_CHECKMULTISIG
+  OP_ELSE
+      # Normal
+      `long_delay`
+      OP_CHECKSEQUENCEVERIFY
+      <watchtower_pubkey>
+      OP_CHECKSIG
+  OP_ENDIF
+  ```
+  Where `<penalty_pubkey1>` and `<penalty_pubkey2>` are the two keys
+  `<bob_penalty_pubkey>` and `<watchtower_penalty_pubkey>`, sorted by ascending
+  order of their DER-encodings.
+  * Spendable by witnesses `<watchtower_penalty_sig> 0` (normal path) or `0 <penalty_sig1>
+    <penalty_sig2> 1` (penalty path)
+
 ## Penalty transaction (off-chain for an open channel)
 
 * input 1 spends output 2 of a Commitment tx, following the path with the delay.
-* input 2 spends the output of a Collateral tx, with scriptSig (?) `0 <collateral_sig1>
-  <collateral_sig2>`.
+* input 2 spends the output of a Claim tx, following the penalty path.
 
 * output:
   * value: `b' + a + b + ε`, where `b'` is Bob's old balance as found in the Commitment tx
