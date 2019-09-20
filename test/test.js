@@ -32,7 +32,7 @@ const fundingColFee = 2330
 const commitmentFee = 14900
 const penaltyFee = 7512 // estimatesmartfee 313 or sth
 const revocationFee = 8520
-const claimFee = 5000
+const reclaimFee = 5000
 
 const aliceOrigRing = rings[0]
 const aliceFundRing = rings[1]
@@ -159,26 +159,26 @@ describe('End-to-end test', () => {
     })
   })
 
-  const claimTX = WchTwr.getClaimTX({
+  const reclaimTX = WchTwr.getReclaimTX({
     rings: {
       bobColRing, wColRing,
       bobPenaltyRing, wPenaltyRing
     },
     delays: {shortDelay, longDelay},
-    colTX, fee: claimFee
+    colTX, fee: reclaimFee
   })
 
-  describe('Claim TX', () => {
+  describe('Reclaim TX', () => {
     it('should verify correctly', () => {
-      assert(claimTX.verify(),
-        'Claim TX does not verify correctly')
+      assert(reclaimTX.verify(),
+        'Reclaim TX does not verify correctly')
     })
 
     const colWitnessHash = colTX.outputs[0].script.code[1].data
-    const claimWitnessScriptForCol = claimTX.inputs[0].witness.getRedeem().sha256()
+    const reclaimWitnessScriptForCol = reclaimTX.inputs[0].witness.getRedeem().sha256()
     it('should spend Collateral TX', () => {
-      assert(colWitnessHash.equals(claimWitnessScriptForCol),
-        'Collateral output witness hash doesn\'t correspond to claim input witness script')
+      assert(colWitnessHash.equals(reclaimWitnessScriptForCol),
+        'Collateral output witness hash doesn\'t correspond to reclaim input witness script')
     })
   })
 
@@ -189,7 +189,7 @@ describe('End-to-end test', () => {
       bobPenaltyRing, wPenaltyRing
     },
     delays: {shortDelay, longDelay, bobDelay: shortDelay},
-    commTX, claimTX, fee: penaltyFee
+    commTX, reclaimTX, fee: penaltyFee
   })
 
   describe('Penalty TX', () => {
@@ -205,11 +205,11 @@ describe('End-to-end test', () => {
         'Commitment output witness hash doesn\'t correspond to penalty input witness script')
     })
 
-    const claimWitnessHash = claimTX.outputs[0].script.code[1].data
-    const penaltyWitnessScriptForClaim = ptx.inputs[1].witness.getRedeem().sha256()
-    it('should spend Claim TX', () => {
-      assert(claimWitnessHash.equals(penaltyWitnessScriptForClaim),
-        'Claim output witness hash doesn\'t correspond to penalty input witness script')
+    const reclaimWitnessHash = reclaimTX.outputs[0].script.code[1].data
+    const penaltyWitnessScriptForReclaim = ptx.inputs[1].witness.getRedeem().sha256()
+    it('should spend Reclaim TX', () => {
+      assert(reclaimWitnessHash.equals(penaltyWitnessScriptForReclaim),
+        'Reclaim output witness hash doesn\'t correspond to penalty input witness script')
     })
   })
 

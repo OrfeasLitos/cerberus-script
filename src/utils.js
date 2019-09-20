@@ -65,17 +65,17 @@ module.exports = {
       'Commitment TX outputs must be P2SH')
   },
 
-  ensureClaimTX: function (tx) {
+  ensureReclaimTX: function (tx) {
     assert(MTX.isMTX(tx),
       'tx is not an instance of MTX')
     assert(tx.inputs.length === 1,
-      'Claim TX must have 1 input')
+      'Reclaim TX must have 1 input')
     assert(tx.inputs[0].getType() === 'witnessscripthash',
-      'Claim TX input must be of type P2WSH')
+      'Reclaim TX input must be of type P2WSH')
     assert(tx.outputs.length === 1,
-      'Claim TX must have 1 output')
+      'Reclaim TX must have 1 output')
     assert(tx.outputs[0].getType() === 'witnessscripthash',
-      'Claim TX output must be of type P2WSH')
+      'Reclaim TX output must be of type P2WSH')
   },
 
   ensureCollateralTX: function (tx) {

@@ -25,7 +25,7 @@ const Scripts = {
     return res
   },
 
-  claimScript: function (key1, key2, watchKey, shortDelay, longDelay) {
+  reclaimScript: function (key1, key2, watchKey, shortDelay, longDelay) {
     const res = new Script()
 
     res.pushSym('OP_IF')

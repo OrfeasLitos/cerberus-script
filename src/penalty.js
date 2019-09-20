@@ -10,11 +10,11 @@ const Script = bcoin.Script
 const Coin = bcoin.Coin
 const Stack = bcoin.Stack
 
-function verifyArgs(rings, delays, commTX, claimTX, fee) {
+function verifyArgs(rings, delays, commTX, reclaimTX, fee) {
   Object.values(rings).map(Utils.ensureWitness)
   Object.values(rings).map(ring => Utils.publicKeyVerify(ring.publicKey))
   Object.values(delays).map(Utils.delayVerify)
-  Utils.ensureClaimTX(claimTX)
+  Utils.ensureReclaimTX(reclaimTX)
   Utils.ensureCommitmentTX(commTX)
   Utils.amountVerify(fee)
 }
@@ -30,9 +30,9 @@ function getPenaltyTX({
     bobPenaltyRing, wPenaltyRing
   },
   delays: {shortDelay, longDelay, bobDelay},
-  commTX, claimTX, fee
+  commTX, reclaimTX, fee
 }) {
-  verifyArgs(arguments[0].rings, arguments[0].delays, commTX, claimTX, fee)
+  verifyArgs(arguments[0].rings, arguments[0].delays, commTX, reclaimTX, fee)
 
   const [key1, key2] = Utils.sortKeys(bobRevRing.publicKey, wRevRing.publicKey)
   bobDelRing.script = Scripts.commScript(
@@ -41,15 +41,15 @@ function getPenaltyTX({
   const commOutputScript = Utils.outputScrFromRedeemScr(bobDelRing.script)
 
   const [key3, key4] = Utils.sortKeys(bobPenaltyRing.publicKey, wPenaltyRing.publicKey)
-  bobPenaltyRing.script = wPenaltyRing.script = Scripts.claimScript(
+  bobPenaltyRing.script = wPenaltyRing.script = Scripts.reclaimScript(
     key3, key4, wPenaltyRing.publicKey, shortDelay, longDelay
   )
-  const claimOutputScript = Utils.outputScrFromRedeemScr(bobPenaltyRing.script)
+  const reclaimOutputScript = Utils.outputScrFromRedeemScr(bobPenaltyRing.script)
 
   const ptx = new MTX({version: 2})
 
   const output = getOutput(bobOwnRing)
-  const value = commTX.outputs[1].value + claimTX.outputs[0].value - fee
+  const value = commTX.outputs[1].value + reclaimTX.outputs[0].value - fee
   ptx.addOutput(output, value)
 
   const commCoin = Utils.getCoinFromTX(commOutputScript.toJSON(), commTX, 1)
@@ -58,8 +58,8 @@ function getPenaltyTX({
   // into thinking ptx is deep enough on-chain
   ptx.inputs[0].sequence = bobDelay
 
-  const claimCoin = Utils.getCoinFromTX(claimOutputScript.toJSON(), claimTX, 0)
-  ptx.addCoin(claimCoin)
+  const reclaimCoin = Utils.getCoinFromTX(reclaimOutputScript.toJSON(), reclaimTX, 0)
+  ptx.addCoin(reclaimCoin)
   // trick OP_CHECKSEQUENCEVERIFY again
   ptx.inputs[1].sequence = shortDelay
 
