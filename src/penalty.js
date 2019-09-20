@@ -25,10 +25,11 @@ function getOutput(ring) {
 
 function signCommInput(ptx, ring) {
   const inputIndex = 0
+  const sighashVersion = 1
+
   const {prevout} = ptx.inputs[inputIndex]
   const value = ptx.view.getOutput(prevout).value
 
-  const sighashVersion = 1
   const sig = ptx.signature(
     inputIndex, ring.script, value, ring.privateKey, null, sighashVersion
   )
