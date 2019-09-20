@@ -55,8 +55,8 @@ Like
   Where `<revocation_pubkey1>` and `<revocation_pubkey2>` are the two keys
   `<alice_collateral_pubkey>` and `<watchtower_revocation_pubkey>`, sorted by ascending
   order of their DER-encodings.
-  * Spendable by witnesses `<alice_delayed_sig> 0` or `0 <revocation_sig1>
-    <revocation_sig2> 1`
+  * Spendable by witnesses `<alice_delayed_sig> 0` (normal path) or `0 <revocation_sig1>
+    <revocation_sig2> 1` (revocation path)
 * output 2:
   * value: `b`
   * script:
@@ -80,8 +80,8 @@ Like
   Where `<revocation_pubkey3>` and `<revocation_pubkey4>` are the two keys
   `<bob_collateral_pubkey>` and `<watchtower_revocation_pubkey>`, sorted by ascending
   order of their DER-encodings.
-  * Spendable by witnesses `<bob_delayed_sig> 0` or `0 <revocation_sig3> <revocation_sig4>
-    1`
+  * Spendable by witnesses `<bob_delayed_sig> 0` (normal path) or `0 <revocation_sig3>
+    <revocation_sig4> 1` (revocation path)
 
 ## Revocation transaction (off-chain for an open channel)
 
