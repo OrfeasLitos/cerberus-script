@@ -72,7 +72,7 @@ function getRevocationTX({
 
   const rtx = new MTX({version: 2})
 
-  const output = getOutput(bobComRing)
+  const output = getOutput(bobOwnRing)
   const value = commTX.outputs[0].value + commTX.outputs[1].value - fee
   rtx.addOutput(output, value)
 
