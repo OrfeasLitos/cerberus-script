@@ -55,12 +55,12 @@ function getPenaltyTX({
   bobDelRing.script = Scripts.commScript(
     key1, key2, bobDelay, bobDelRing.publicKey
   )
-  const commOutputScript = Utils.outputScrFromWitScr(bobDelRing.script)
+  const commOutputScript = Utils.outputScrFromRedeemScr(bobDelRing.script)
 
   bobColRing.script = wColRing.script = Script.fromMultisig(2, 2, [
     bobColRing.publicKey, wColRing.publicKey
   ])
-  const colOutputScript = Utils.outputScrFromWitScr(bobColRing.script)
+  const colOutputScript = Utils.outputScrFromRedeemScr(bobColRing.script)
 
   const ptx = new MTX({version: 2})
 
