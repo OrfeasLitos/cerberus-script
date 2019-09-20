@@ -62,13 +62,13 @@ function getRevocationTX({
   aliceRevRing.script = Scripts.commScript(
     key1, key2, bobDelay, aliceDelRing.publicKey
   )
-  const outputScript1 = Utils.outputScrFromWitScr(aliceRevRing.script)
+  const outputScript1 = Utils.outputScrFromRedeemScr(aliceRevRing.script)
 
   const [key3, key4] = Utils.sortKeys(bobRevRing.publicKey, wRevRing2.publicKey)
   bobRevRing.script = Scripts.commScript(
     key3, key4, aliceDelay, bobDelRing.publicKey
   )
-  const outputScript2 = Utils.outputScrFromWitScr(bobRevRing.script)
+  const outputScript2 = Utils.outputScrFromRedeemScr(bobRevRing.script)
 
   const rtx = new MTX({version: 2})
 

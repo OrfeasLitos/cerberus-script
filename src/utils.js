@@ -95,11 +95,11 @@ module.exports = {
     return (key1.equals(ring1.publicKey)) ? [ring1, ring2] : [ring2, ring1]
   },
 
-  outputScrFromWitScr: function (witnessScript) {
+  outputScrFromRedeemScr: function (redeemScript) {
     const res = new Script()
 
     res.pushSym('OP_0')
-    res.pushData(witnessScript.sha256())
+    res.pushData(redeemScript.sha256())
     res.compile()
 
     return res

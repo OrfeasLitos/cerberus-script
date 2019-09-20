@@ -28,8 +28,8 @@ function interpretInput(args) {
 }
 
 function getOutput(fundKey1, fundKey2) {
-  const witnessScript = Script.fromMultisig(2, 2, [fundKey1, fundKey2])
-  return Utils.outputScrFromWitScr(witnessScript)
+  const redeemScript = Script.fromMultisig(2, 2, [fundKey1, fundKey2])
+  return Utils.outputScrFromRedeemScr(redeemScript)
 }
 
 function getFundColTXFromMTX({fctx, fundKey1, fundKey2, outAmount}) {

@@ -24,8 +24,8 @@ function verifyArgs(rings, delays, amounts, wRevRing1, wRevRing2) {
 
 function getOutput(commKey, watchKey, delay, delKey, amount) {
   const [key1, key2] = Utils.sortKeys(commKey, watchKey)
-  const witnessScript = Scripts.commScript(key1, key2, delay, delKey)
-  return Utils.outputScrFromWitScr(witnessScript)
+  const redeemScript = Scripts.commScript(key1, key2, delay, delKey)
+  return Utils.outputScrFromRedeemScr(redeemScript)
 }
 
 function getCommitmentTX({
@@ -46,7 +46,7 @@ function getCommitmentTX({
   aliceFundRing.script = bobFundRing.script = Script.fromMultisig(2, 2, [
     aliceFundRing.publicKey, bobFundRing.publicKey
   ])
-  const outputScript = Utils.outputScrFromWitScr(aliceFundRing.script)
+  const outputScript = Utils.outputScrFromRedeemScr(aliceFundRing.script)
 
   let ctx = new MTX({version: 2})
 
