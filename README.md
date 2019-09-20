@@ -125,7 +125,7 @@ Like
 
 ## Penalty transaction (off-chain for an open channel)
 
-* input 1 spends output 2 of a Commitment tx, following the path with the delay.
+* input 1 spends output 2 of a Commitment tx, following the normal path.
 * input 2 spends the output of a Claim tx, following the penalty path.
 
 * output:
