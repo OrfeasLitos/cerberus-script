@@ -18,15 +18,16 @@ watchtower W. All scripts are P2WSH.
 Like
 [LN](https://github.com/lightningnetwork/lightning-rfc/blob/636b9f2e28c5eb9564b50b85ac85e23fc2176623/03-transactions.md#funding-transaction-output):
 * value: `a + b`
-* script: `2 <pubkey1> <pubkey2> 2 OP_CHECKMULTISIG`, where `pubkey1`, `pubkey2` are the
-  `funding_pubkey`s of Alice and Bob, sorted by ascending order of their DER-encodings.
+* redeem script: `2 <pubkey1> <pubkey2> 2 OP_CHECKMULTISIG`, where `pubkey1`, `pubkey2`
+  are the `funding_pubkey`s of Alice and Bob, sorted by ascending order of their
+  DER-encodings.
 
 ## Collateral transaction output (on-chain)
 
 * value: `a + b + ε` (provided by W)
-* script: `2 <collateral_pubkey1> <collateral_pubkey2> 2 OP_CHECKMULTISIG`, where
-  `collateral_pubkey1`, `collateral_pubkey2` are the public keys of Bob and W,
-  sorted by ascending order of their DER-encodings.
+* redeem script: `2 <collateral_pubkey1> <collateral_pubkey2> 2 OP_CHECKMULTISIG`, where
+  `collateral_pubkey1`, `collateral_pubkey2` are the public keys of Bob and W, sorted by
+  ascending order of their DER-encodings.
 
 ## Commitment transaction held by Alice (off-chain)
 
@@ -34,7 +35,7 @@ Like
 * output 1: like [LN
   revocation](https://github.com/lightningnetwork/lightning-rfc/blob/636b9f2e28c5eb9564b50b85ac85e23fc2176623/03-transactions.md#to_local-output)
   * value: `a`
-  * script:
+  * redeem script:
   ```
   OP_IF
       # Revocation
@@ -55,11 +56,11 @@ Like
   Where `<revocation_pubkey1>` and `<revocation_pubkey2>` are the two keys
   `<alice_collateral_pubkey>` and `<watchtower_revocation_pubkey>`, sorted by ascending
   order of their DER-encodings.
-  * Spendable by witnesses `<alice_delayed_sig> 0` (normal path) or `0 <revocation_sig1>
-    <revocation_sig2> 1` (revocation path)
+  * Spendable by witness scripts `<alice_delayed_sig> 0` (normal path) or `0
+    <revocation_sig1> <revocation_sig2> 1` (revocation path)
 * output 2:
   * value: `b`
-  * script:
+  * redeem script:
   ```
   OP_IF
       # Revocation
@@ -80,8 +81,8 @@ Like
   Where `<revocation_pubkey3>` and `<revocation_pubkey4>` are the two keys
   `<bob_collateral_pubkey>` and `<watchtower_revocation_pubkey>`, sorted by ascending
   order of their DER-encodings.
-  * Spendable by witnesses `<bob_delayed_sig> 0` (normal path) or `0 <revocation_sig3>
-    <revocation_sig4> 1` (revocation path)
+  * Spendable by witness scripts `<bob_delayed_sig> 0` (normal path) or `0
+    <revocation_sig3> <revocation_sig4> 1` (revocation path)
 
 ## Revocation transaction (off-chain for an open channel)
 
@@ -89,15 +90,15 @@ Like
 * input 2 spends output 2 of a Commitment tx, following the revocation path.
 * output:
   * value: `a + b`
-  * script: P2WPKH to `<bob_pubkey>`
+  * redeem script: P2WPKH to `<bob_pubkey>`
 
 ## Claim transaction (off-chain for an open channel)
 
-* unique input spends the output of a Collateral tx, with scriptSig (?) `0 <collateral_sig1>
-  <collateral_sig2>`.
+* unique input spends the output of a Collateral tx, with witness script `0
+  <collateral_sig1> <collateral_sig2>`.
 * unique output:
   * value: `a + b + ε`
-  * script:
+  * redeem script:
   ```
   OP_IF
       # Penalty
@@ -120,8 +121,8 @@ Like
   Where `<penalty_pubkey1>` and `<penalty_pubkey2>` are the two keys
   `<bob_penalty_pubkey>` and `<watchtower_penalty_pubkey>`, sorted by ascending
   order of their DER-encodings.
-  * Spendable by witnesses `<watchtower_penalty_sig> 0` (normal path) or `0 <penalty_sig1>
-    <penalty_sig2> 1` (penalty path)
+  * Spendable by witness scripts `<watchtower_penalty_sig> 0` (normal path) or `0
+    <penalty_sig1> <penalty_sig2> 1` (penalty path)
 
 ## Penalty transaction (off-chain for an open channel)
 
@@ -131,4 +132,4 @@ Like
 * output:
   * value: `b' + a + b + ε`, where `b'` is Bob's old balance as found in the Commitment tx
     spent by this Penalty tx
-  * script: P2WPKH to `<bob_pubkey>`
+  * redeem script: P2WPKH to `<bob_pubkey>`
