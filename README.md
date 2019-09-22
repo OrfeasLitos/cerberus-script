@@ -92,7 +92,7 @@ Like
   * value: `a + b`
   * redeem script: P2WPKH to `<bob_pubkey>`
 
-## Claim transaction (off-chain for an open channel)
+## Reclaim transaction (off-chain for an open channel)
 
 * unique input spends the output of a Collateral tx, with witness script `0
   <collateral_sig1> <collateral_sig2>`.
