@@ -125,10 +125,20 @@ Like
   * Spendable by witness scripts `<watchtower_penalty_sig> 0` (normal path) or `0
     <penalty_sig1> <penalty_sig2> 1` (penalty path)
 
-## Penalty transaction (off-chain for an open channel)
+## Penalty transaction 1 (off-chain for an open channel)
 
 * input 1 spends output 2 of a Commitment tx, following the normal path.
-* input 2 spends the output of a Claim tx, following the penalty path.
+* input 2 spends the output of a Collateral tx.
+
+* output:
+  * value: `b' + a + b + ε`, where `b'` is Bob's old balance as found in the Commitment tx
+    spent by this Penalty tx
+  * redeem script: P2WPKH to `<bob_pubkey>`
+
+## Penalty transaction 2 (off-chain for an open channel)
+
+* input 1 spends output 2 of a Commitment tx, following the normal path.
+* input 2 spends the output of a Reclaim tx, following the penalty path.
 
 * output:
   * value: `b' + a + b + ε`, where `b'` is Bob's old balance as found in the Commitment tx
