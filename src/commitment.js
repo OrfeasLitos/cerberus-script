@@ -24,7 +24,7 @@ function verifyArgs(rings, delays, amounts, wRevRing1, wRevRing2) {
 
 function getOutput(commKey, watchKey, delay, delKey, amount) {
   const [key1, key2] = Utils.sortKeys(commKey, watchKey)
-  const redeemScript = Scripts.commScript(key1, key2, delay, delKey)
+  const redeemScript = Scripts.commReclaimScript(key1, key2, delay, delKey)
   return Utils.outputScrFromRedeemScr(redeemScript)
 }
 

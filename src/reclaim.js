@@ -20,7 +20,7 @@ function verifyArgs(rings, delays, colTX, fee) {
 
 function getOutput(bobKey, watchKey, shortDelay, longDelay) {
   const [key1, key2] = Utils.sortKeys(bobKey, watchKey)
-  const redeemScript = Scripts.reclaimScript(key1, key2, watchKey, shortDelay, longDelay)
+  const redeemScript = Scripts.commReclaimScript(key1, key2, longDelay, watchKey)
   return Utils.outputScrFromRedeemScr(redeemScript)
 }
 

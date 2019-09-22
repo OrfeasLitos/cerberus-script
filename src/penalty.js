@@ -35,14 +35,14 @@ function getPenaltyTX({
   verifyArgs(arguments[0].rings, arguments[0].delays, commTX, reclaimTX, fee)
 
   const [key1, key2] = Utils.sortKeys(bobRevRing.publicKey, wRevRing.publicKey)
-  bobDelRing.script = Scripts.commScript(
+  bobDelRing.script = Scripts.commReclaimScript(
     key1, key2, bobDelay, bobDelRing.publicKey
   )
   const commOutputScript = Utils.outputScrFromRedeemScr(bobDelRing.script)
 
   const [key3, key4] = Utils.sortKeys(bobPenaltyRing.publicKey, wPenaltyRing.publicKey)
-  bobPenaltyRing.script = wPenaltyRing.script = Scripts.reclaimScript(
-    key3, key4, wPenaltyRing.publicKey, shortDelay, longDelay
+  bobPenaltyRing.script = wPenaltyRing.script = Scripts.commReclaimScript(
+    key3, key4, longDelay, wPenaltyRing.publicKey
   )
   const reclaimOutputScript = Utils.outputScrFromRedeemScr(bobPenaltyRing.script)
 

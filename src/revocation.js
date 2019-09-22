@@ -39,13 +39,13 @@ function getRevocationTX({
   verifyArgs(arguments[0].rings, arguments[0].delays, commTX, fee)
 
   const [key1, key2] = Utils.sortKeys(aliceRevRing.publicKey, wRevRing1.publicKey)
-  aliceRevRing.script = wRevRing1.script = Scripts.commScript(
+  aliceRevRing.script = wRevRing1.script = Scripts.commReclaimScript(
     key1, key2, bobDelay, aliceDelRing.publicKey
   )
   const outputScript1 = Utils.outputScrFromRedeemScr(aliceRevRing.script)
 
   const [key3, key4] = Utils.sortKeys(bobRevRing.publicKey, wRevRing2.publicKey)
-  bobRevRing.script = wRevRing2.script = Scripts.commScript(
+  bobRevRing.script = wRevRing2.script = Scripts.commReclaimScript(
     key3, key4, aliceDelay, bobDelRing.publicKey
   )
   const outputScript2 = Utils.outputScrFromRedeemScr(bobRevRing.script)
