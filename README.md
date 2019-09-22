@@ -21,6 +21,7 @@ Like
 * redeem script: `2 <pubkey1> <pubkey2> 2 OP_CHECKMULTISIG`, where `pubkey1`, `pubkey2`
   are the `funding_pubkey`s of Alice and Bob, sorted by ascending order of their
   DER-encodings.
+  * Spendable by witness script `0 <pubkey1_sig> <pubkey2_sig>`
 
 ## Collateral transaction output (on-chain)
 
@@ -28,6 +29,7 @@ Like
 * redeem script: `2 <collateral_pubkey1> <collateral_pubkey2> 2 OP_CHECKMULTISIG`, where
   `collateral_pubkey1`, `collateral_pubkey2` are the public keys of Bob and W, sorted by
   ascending order of their DER-encodings.
+  * Spendable by witness script `0 <collateral_sig1> <collateral_sig2>`
 
 ## Commitment transaction held by Alice (off-chain)
 
