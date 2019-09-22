@@ -1,0 +1,24 @@
+\documentclass{article}
+
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{auto-pst-pdf}
+\usepackage{amssymb}
+\usepackage{calc}
+\usepackage{pgffor}
+\usepackage{xparse}
+\usepackage{expl3}
+
+\usepackage{txfig}
+
+\begin{document}
+\begin{figure}
+\begin{pspicture}
+  \drawbox(10.0,-5,0)(n_btc)(revocation -- \textit{Rev})(
+    {$o_{\mathit{Com}}^2$,},{$o_{\mathit{Com}}^1$,}%
+  )(
+    {$\sigma_{B}$,$a'+b'$}%
+  )
+\end{pspicture}
+\end{figure}
+\end{document}

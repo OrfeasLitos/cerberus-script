@@ -1,0 +1,110 @@
+% Many thanks to Vesselin Velichkov for
+% providing an example of a particular transaction
+
+\ProvidesPackage{txfig}
+
+\ExplSyntaxOn
+\cs_new_eq:NN \calc \fp_eval:n
+\ExplSyntaxOff
+
+
+% #1: position
+% #2: node name
+% #3: text string
+\def\pstext(#1)(#2)(#3){
+    \rput(#1){\rnode{#2}{{#3}}}
+}
+
+% Text within a frame of fixed size i.e.
+% Size of the frame does not depend on the text
+% (#1,#2): position of the frame
+% (#3): height of rectangle given as offsets with respect to 0 e.g.
+% (1.0,0.25) means \pspolygon(-1.0,-0.25)(1.0,-0.25)(1.0,0.25)(-1.0,0.25)
+% #4: rectangle color
+% #5: text node name
+% #6: text string
+\def\textpolygon(#1,#2)(#3,#4)(#5)(#6)(#7) {
+  \rput(#1,#2) {
+    \pspolygon[fillstyle=solid,fillcolor=#5](-#3,-#4)(#3,-#4)(#3,#4)(-#3,#4)
+    \pstext(0,0)(#6)(#7)
+  }
+}
+
+\NewDocumentCommand{\inoutheight}{}{10}
+\NewDocumentCommand{\txboxmargin}{}{7}
+
+\NewDocumentCommand{\drawinput}{mm}{
+  \rput(\calc{-\txinoffset-\txboxhoffset}pt, \calc{\index - (0.5 * \inputsno) - \inoutheight/35}){#1}
+  \rput(\calc{-\txinoffset-\txboxhoffset}pt, \calc{\index - (0.5 * \inputsno) - 3*\inoutheight/35}){#2}
+  \pstext(\calc{-\txinoffset*2-\txboxhoffset}pt, \calc{\index - (0.5 * \inputsno) - 2*\inoutheight/35})(n_input_\index_from)($$)
+  \pstext(-\txboxhoffset, \calc{\index - (0.5 * \inputsno) - 2*\inoutheight/35})(n_input_\index_to)($$)
+  \ncline[nodesepA=0.0,nodesepB=0.0,arrowsize=4pt]{->}
+    {n_input_\index_from}{n_input_\index_to}
+}
+\NewDocumentCommand{\prepareinput}{>{\SplitArgument{1}{,}}m}{\drawinput#1}
+
+\NewDocumentCommand{\setmaxinlength}{mmmm}{\setlength{\txinoffset}{
+  {\maxof{\widthof{#1}}{\maxof{\widthof{#2}}{\maxof{\widthof{#3}}{\widthof{#4}}}}} / 2}}
+
+\NewDocumentCommand{\maxinlength}{>{\SplitArgument{3}{,}}m}{\setmaxinlength#1}
+
+\NewDocumentCommand{\drawoutput}{mm}{
+  \rput(\calc{\txoutoffset+\txboxhoffset}pt, \calc{\index - (0.5 * \outputsno) - \inoutheight/35}){#1} % TODO: smarter y coordinates?
+  \rput(\calc{\txoutoffset+\txboxhoffset}pt, \calc{\index - (0.5 * \outputsno) - 3*\inoutheight/35}){#2}
+  \pstext(\txboxhoffset, \calc{\index - (0.5 * \outputsno) - 2*\inoutheight/35})(n_output_\index_from)($$)
+  \pstext(\calc{\txoutoffset*2+\txboxhoffset}pt, \calc{\index - (0.5 * \outputsno) - 2*\inoutheight/35})(n_output_\index_to)($$)
+  \ncline[nodesepA=0.0,nodesepB=0.0,arrowsize=4pt]{->}
+    {n_output_\index_from}{n_output_\index_to}
+}
+\NewDocumentCommand{\prepareoutput}{>{\SplitArgument{1}{,}}m}{\drawoutput#1}
+
+\NewDocumentCommand{\setmaxoutlength}{mmmm}{\setlength{\txoutoffset}{
+  {\maxof{\widthof{#1}}{\maxof{\widthof{#2}}{\maxof{\widthof{#3}}{\widthof{#4}}}}} / 2}}
+
+\NewDocumentCommand{\maxoutlength}{>{\SplitArgument{3}{,}}m}{\setmaxoutlength#1}
+
+\newlength{\maxinouts}
+\NewDocumentCommand{\setmaxinouts}{mm}{\setlength{\maxinouts}{\maxof{#1}{#2}}}
+
+% #1: coordinates
+% #2: node name
+% #3: text inside box e.g. "tx name"
+% #4: inputs
+% #5: outputs
+\def\drawbox(#1)(#2)(#3)(#4)(#5){
+  \newlength{\txinoffset}
+  \maxinlength{#4}
+
+  \newlength{\txoutoffset}
+  %\setlength{\txoutoffset}{\maxof{\widthof{#5}}{\widthof{#6}} / 2 + \txarrowmargin}
+  \maxoutlength{#5}
+
+  \newlength{\txboxhoffset}
+  \setlength{\txboxhoffset}{\widthof{#3} / 2 + \txboxmargin}
+
+  \foreach \input [count=\outidx] in {#5} {
+    \gdef\outputsno{\outidx}
+  }
+  \foreach \input [count=\inidx] in {#4} {
+    \gdef\inputsno{\inidx}
+  }
+  \setmaxinouts{\inputsno}{\outputsno}
+
+  \newlength{\txboxvoffset}
+  \setlength{\txboxvoffset}{\calc{\maxinouts * \inoutheight} + \calc{3 * \txboxmargin}}
+
+  \rput(#1) {
+    \pnode{#2} {
+      % inputs
+      \foreach \input [count=\index] in {#4} {
+        \expandafter\prepareinput\expandafter{\input}
+      }
+      % box
+      \textpolygon(0.0,0.0)(\txboxhoffset,\txboxvoffset)(white)(n_box)({#3})
+      % outputs
+      \foreach \output [count=\index] in {#5} {
+        \expandafter\prepareoutput\expandafter{\output}
+      }
+    }
+  }
+}
