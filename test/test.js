@@ -182,7 +182,7 @@ describe('End-to-end test', () => {
     })
   })
 
-  const ptx = WchTwr.getPenalty2TX({
+  const p2tx = WchTwr.getPenalty2TX({
     rings: {
       bobOwnRing, bobDelRing,
       bobRevRing, wRevRing: wRevRing1,
@@ -192,24 +192,25 @@ describe('End-to-end test', () => {
     commTX, reclaimTX, fee: penaltyFee
   })
 
-  describe('Penalty TX', () => {
+  describe('Penalty 2 TX', () => {
     it('should verify correctly', () => {
-      assert(ptx.verify(),
-        'Penalty TX does not verify correctly')
+      assert(p2tx.verify(),
+        'Penalty 2 TX does not verify correctly')
     })
 
     const commWitnessHash = commTX.outputs[1].script.code[1].data
-    const penaltyWitnessScriptForComm = ptx.inputs[0].witness.getRedeem().sha256()
+    const penalty2WitnessScriptForComm = p2tx.inputs[0].witness.getRedeem().sha256()
     it('should spend Commitment TX output 1', () => {
-      assert(commWitnessHash.equals(penaltyWitnessScriptForComm),
-        'Commitment output witness hash doesn\'t correspond to penalty input witness script')
+      assert(commWitnessHash.equals(penalty2WitnessScriptForComm),
+        'Commitment output witness hash doesn\'t correspond to penalty 2 input witness script'
+      )
     })
 
     const reclaimWitnessHash = reclaimTX.outputs[0].script.code[1].data
-    const penaltyWitnessScriptForReclaim = ptx.inputs[1].witness.getRedeem().sha256()
+    const penalty2WitnessScriptForReclaim = p2tx.inputs[1].witness.getRedeem().sha256()
     it('should spend Reclaim TX', () => {
-      assert(reclaimWitnessHash.equals(penaltyWitnessScriptForReclaim),
-        'Reclaim output witness hash doesn\'t correspond to penalty input witness script')
+      assert(reclaimWitnessHash.equals(penalty2WitnessScriptForReclaim),
+        'Reclaim output witness hash doesn\'t correspond to penalty 2 input witness script')
     })
   })
 
