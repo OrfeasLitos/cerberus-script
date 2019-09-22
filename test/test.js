@@ -164,7 +164,7 @@ describe('End-to-end test', () => {
       bobColRing, wColRing,
       bobPenaltyRing, wPenaltyRing
     },
-    delays: {shortDelay, longDelay},
+    delay: longDelay,
     colTX, fee: reclaimFee
   })
 
@@ -188,7 +188,7 @@ describe('End-to-end test', () => {
       bobRevRing, wRevRing: wRevRing1,
       bobPenaltyRing, wPenaltyRing
     },
-    delays: {shortDelay, longDelay, bobDelay: shortDelay},
+    delays: {longDelay, bobDelay: shortDelay},
     commTX, reclaimTX, fee: penaltyFee
   })
 
