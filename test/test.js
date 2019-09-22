@@ -182,6 +182,39 @@ describe('End-to-end test', () => {
     })
   })
 
+  const p1tx = WchTwr.getPenalty1TX({
+    rings: {
+      bobOwnRing, bobDelRing,
+      bobRevRing, wRevRing: wRevRing1,
+      bobColRing, wColRing
+    },
+    bobDelay: shortDelay, commTX,
+    colTX, fee: penaltyFee
+  })
+
+  describe('Penalty 1 TX', () => {
+    it('should verify correctly', () => {
+      assert(p1tx.verify(),
+        'Penalty 1 TX does not verify correctly')
+    })
+
+    const commWitnessHash = commTX.outputs[1].script.code[1].data
+    const penalty1WitnessScriptForComm = p1tx.inputs[0].witness.getRedeem().sha256()
+    it('should spend Commitment TX output 1', () => {
+      assert(commWitnessHash.equals(penalty1WitnessScriptForComm),
+        'Commitment output witness hash doesn\'t correspond to penalty 1 input witness script'
+      )
+    })
+
+    const colWitnessHash = colTX.outputs[0].script.code[1].data
+    const penalty1WitnessScriptForCol = p1tx.inputs[1].witness.getRedeem().sha256()
+    it('should spend Collateral TX', () => {
+      assert(colWitnessHash.equals(penalty1WitnessScriptForCol),
+        'Collateral output witness hash doesn\'t correspond to penalty 1 input witness script'
+      )
+    })
+  })
+
   const p2tx = WchTwr.getPenalty2TX({
     rings: {
       bobOwnRing, bobDelRing,

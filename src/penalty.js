@@ -10,6 +10,15 @@ const Script = bcoin.Script
 const Coin = bcoin.Coin
 const Stack = bcoin.Stack
 
+function verify1Args(rings, delay, commTX, colTX, fee) {
+  Object.values(rings).map(Utils.ensureWitness)
+  Object.values(rings).map(ring => Utils.publicKeyVerify(ring.publicKey))
+  Utils.delayVerify(delay)
+  Utils.ensureCollateralTX(colTX)
+  Utils.ensureCommitmentTX(commTX)
+  Utils.amountVerify(fee)
+}
+
 function verify2Args(rings, delays, commTX, reclaimTX, fee) {
   Object.values(rings).map(Utils.ensureWitness)
   Object.values(rings).map(ring => Utils.publicKeyVerify(ring.publicKey))
@@ -23,7 +32,34 @@ function getOutput(ring) {
   return Utils.getP2WPKHOutput(ring)
 }
 
-function getPenalty1TX({}) {
+function getPenalty1TX({
+  rings: {
+    bobOwnRing, bobDelRing,
+    bobRevRing, wRevRing,
+    bobColRing, wColRing
+  },
+  bobDelay, commTX, colTX, fee
+}) {
+  verify1Args(arguments[0].rings, bobDelay, commTX, colTX, fee)
+
+  const getColScript = (bobColKey, wColKey) => {
+    return Script.fromMultisig(2, 2, [bobColKey, wColKey])
+  }
+
+  const sign = (tx, bobColRing, wColRing) => {
+    return tx.sign([bobColRing, wColRing])
+  }
+
+  return getPenaltyTX({
+    rings: {
+      bobOwnRing, bobDelRing, bobRevRing, wRevRing,
+      bobColPenaltyRing: bobColRing,
+      wColPenaltyRing: wColRing,
+    },
+    delays: {longDelay: null, bobDelay},
+    commTX, colReclaimTX: colTX,
+    fee, getColReclaimScript: getColScript, sign
+  })
 }
 
 function getPenalty2TX({
@@ -99,4 +135,4 @@ function getPenaltyTX({
   return ptx
 }
 
-module.exports = {getPenalty1TX: getPenaltyTX, getPenalty2TX}
+module.exports = {getPenalty1TX, getPenalty2TX}
