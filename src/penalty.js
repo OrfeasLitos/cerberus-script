@@ -10,7 +10,7 @@ const Script = bcoin.Script
 const Coin = bcoin.Coin
 const Stack = bcoin.Stack
 
-function verifyArgs(rings, delays, commTX, reclaimTX, fee) {
+function verify2Args(rings, delays, commTX, reclaimTX, fee) {
   Object.values(rings).map(Utils.ensureWitness)
   Object.values(rings).map(ring => Utils.publicKeyVerify(ring.publicKey))
   Object.values(delays).map(Utils.delayVerify)
@@ -34,6 +34,8 @@ function getPenalty2TX({
   },
   delays, commTX, reclaimTX, fee
 }) {
+  verify2Args(arguments[0].rings, arguments[0].delays, commTX, reclaimTX, fee)
+
   const getReclaimScript = (bobPenaltyKey, wPenaltyKey, delay) => {
     const keys = Utils.sortKeys(bobPenaltyKey, wPenaltyKey)
     return Scripts.commReclaimScript(...keys, delay, wPenaltyKey)
@@ -63,8 +65,6 @@ function getPenaltyTX({
   delays: {longDelay, bobDelay},
   commTX, colReclaimTX, fee, getColReclaimScript, sign
 }) {
-  verifyArgs(arguments[0].rings, arguments[0].delays, commTX, colReclaimTX, fee)
-
   const [key1, key2] = Utils.sortKeys(bobRevRing.publicKey, wRevRing.publicKey)
   bobDelRing.script = Scripts.commReclaimScript(
     key1, key2, bobDelay, bobDelRing.publicKey
