@@ -23,7 +23,7 @@ function getOutput(ring) {
   return Utils.getP2WPKHOutput(ring)
 }
 
-function getPenaltyTX({
+function getPenalty2TX({
   rings: {
     bobOwnRing, bobDelRing,
     bobRevRing, wRevRing,
@@ -71,4 +71,4 @@ function getPenaltyTX({
   return ptx
 }
 
-module.exports = getPenaltyTX
+module.exports = getPenalty2TX

@@ -5,6 +5,6 @@ module.exports = {
   getCollateralTX: require('./funding-collateral'),
   getCommitmentTX: require('./commitment'),
   getReclaimTX: require('./reclaim'),
-  getPenaltyTX: require('./penalty'),
+  getPenalty2TX: require('./penalty2'),
   getRevocationTX: require('./revocation'),
 }

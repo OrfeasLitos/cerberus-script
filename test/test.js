@@ -182,7 +182,7 @@ describe('End-to-end test', () => {
     })
   })
 
-  const ptx = WchTwr.getPenaltyTX({
+  const ptx = WchTwr.getPenalty2TX({
     rings: {
       bobOwnRing, bobDelRing,
       bobRevRing, wRevRing: wRevRing1,
