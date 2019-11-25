@@ -65,3 +65,9 @@ typings/
 
 # vim swap files
 *.swp
+
+# html files
+*.html
+
+# form
+form.png
