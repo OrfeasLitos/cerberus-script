@@ -1,10 +1,9 @@
-Bitcoin, like other decentralised cryptocurrencies, has inherent scalability issues. One prominent solution to that is
-the Lightning Network which allows users to exchange funds off-chain, with minimal latency. Unfortunately, every
-Lightning user has to periodically sync with the blockchain to ensure her counterparty hasn't committed fraud and punish
-him if he has. To relax this requirement, there exist services known as watchtowers to which Lightning users can
-delegate watching the blockchain. In their current form, watchtowers are only paid when fraud is attempted, which is the
-very thing they are trying to protect against. This leads to misaligned incentives for watchtowers and lack of a Nash
-Equilibrium.
+Bitcoin, like other decentralised blockchains, has inherent scalability issues. One solution is Lightning which allows
+users to exchange funds off-chain with minimal latency. Unfortunately, every Lightning user has to periodically sync
+with the blockchain to ensure her counterparty hasn't committed fraud and punish him if he has. To relax this
+requirement, there exist services known as watchtowers to which Lightning users can delegate watching the blockchain.
+Currently watchtowers are only paid when fraud is attempted, which is the very thing they are trying to protect against.
+This leads to misaligned incentives and lack of a Nash Equilibrium.
 
 In our work we propose an alternative watchtower construction and we prove its incentive compatibility. A watchtower can
 now be paid periodically, ensuring predictable profitability. To achieve this, the watchtower must lock some funds as
