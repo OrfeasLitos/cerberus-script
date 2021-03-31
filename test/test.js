@@ -1,8 +1,8 @@
 'use strict'
 
 const bcoin = require('bcoin')
-const sha256 = require('bcrypto/lib/sha256')
-const assert = require('bsert')
+const sha256 = require('bcoin/node_modules/bcrypto').SHA256
+const assert = require('bcoin/node_modules/bsert')
 
 const KeyRing = bcoin.KeyRing
 const Amount = bcoin.Amount
@@ -22,8 +22,8 @@ rings.map(ring => {ring.witness = true})
 const shortDelay = 42
 const longDelay = 420
 
-const fundingHash = sha256.digest(Buffer.from('funding')).toString('hex')
-const colHash = sha256.digest(Buffer.from('collateral')).toString('hex')
+const fundingHash = sha256.digest(Buffer.from('funding'))
+const colHash = sha256.digest(Buffer.from('collateral'))
 
 const aliceAmount = Amount.fromBTC(10).toValue()
 const bobAmount = Amount.fromBTC(20).toValue()
@@ -74,7 +74,7 @@ describe('End-to-end test', () => {
       value: aliceAmount + bobAmount,
       coinbase: false,
       script: aliceOrigRing.getProgram().toRaw().toString('hex'),
-      hash: fundingHash,
+      hash: fundingHash.toString('hex'),
       index: 0
     }))
 
@@ -141,7 +141,7 @@ describe('End-to-end test', () => {
       value: aliceAmount + bobAmount + colEpsilon,
       coinbase: false,
       script: wOrigRing.getProgram().toRaw().toString('hex'),
-      hash: colHash,
+      hash: colHash.toString('hex'),
       index: 0
     }))
 

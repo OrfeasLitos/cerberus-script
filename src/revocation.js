@@ -1,7 +1,7 @@
 'use strict'
 
 const bcoin = require('bcoin')
-const assert = require('bsert')
+const assert = require('bcoin/node_modules/bsert')
 
 const Scripts = require('./scripts')
 const Utils = require('./utils')
