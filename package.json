@@ -9,7 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "bcoin": "github:bcoin-org/bcoin#semver:~2.0.0",
-    "mocha": "^7.2.0"
+    "bcoin": "github:bcoin-org/bcoin#semver:~2.2.0",
+    "mocha": "*"
   }
 }
