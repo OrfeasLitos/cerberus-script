@@ -71,3 +71,7 @@ typings/
 
 # form
 form.png
+
+*.pdf
+quick
+bib
