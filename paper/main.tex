@@ -125,19 +125,20 @@
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
-\author{Zeta Avarikioti\inst{1} \and
-Orfeas Stefanos Thyfronitis Litos\inst{2} \and Roger Wattenhofer\inst{1}}
+\author{Anonymized Submission}
+%\author{Zeta Avarikioti\inst{1} \and
+%Orfeas Stefanos Thyfronitis Litos\inst{2} \and Roger Wattenhofer\inst{1}}
 %
-\authorrunning{Z. Avarikioti et al.}
+%\authorrunning{Z. Avarikioti et al.}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
-\institute{ETH Z{\"u}rich
+%\institute{ETH Z{\"u}rich
 % \email{\{zetavar,wattenhofer\}@ethz.ch}
-\and
-University of Edinburgh
+%\and
+%University of Edinburgh
 % \email{o.thyfronitis@ed.ac.uk}
- }
+% }
 %
 
 \date{}
@@ -195,7 +196,7 @@ Hence, rational watchtowers are incentivized both to participate and act upon fr
 In our construction, the parties can go offline for an extended period of time and need only be online to penalize the watchtower.
 This way we weaken the availability requirement for the parties of a payment channel.
 More importantly, \sys channels build upon and extend Lightning channels and only require timelocks and additional transactions.% and hashlocks.
-We also provide a proof-of-concept implementation (\url{https://github.com/OrfeasLitos/cerberus-script}).
+We also provide a proof-of-concept implementation (\url{https://github.com/fc-submission-132/cerberus-script}).
 
 % Other channel constructions are available that provide incentive-compatible solutions~\cite{avarikioti2019brick,mccorry2018pisa}; none of them however are compatible with script and thus cannot be deployed on Bitcoin.
 
@@ -852,7 +853,7 @@ It has one output, with the script of Fig.~\ref{script:claim}. The public keys b
 
 The commitment transaction has a unique input that spends the funding output with witness script \texttt{0 <pubkey1\_sig> <pubkey2\_sig>}. It also has two outputs, the scripts of which are slight variations of each other (replace Alice with Bob and vice-versa). Figure~\ref{script:commitment:first} depicts the first output, while
 % The exact scripts can be found in Fig.~\ref{script:commitment:first} and~\ref{script:commitment:second}.
-the exact scripts of both outputs can be found in the proof-of-concept implementation~\url{https://github.com/OrfeasLitos/cerberus-script}.
+the exact scripts of both outputs can be found in the proof-of-concept implementation~\url{https://github.com/fc-submission-132/cerberus-script}.
 For the first output, the two revocation public keys are those of Alice and the watchtower, sorted by ascending order of their DER-encodings. Similarly sorted are the revocation public keys of Bob and the watchtower in the second output.
 
 
@@ -1198,7 +1199,7 @@ The penalty transaction 1 spends the second output of the commitment transaction
 Lastly, the penalty transaction 2 is very similar with penalty transaction 1, except that does not spend the collateral, but the reclaim transaction. Explicitly, penalty transaction 2 spends the second output of the commitment transaction and the output of the reclaim transaction following the penalty path. It also has a single plain P2WPKH output to Bob's public key. The first input follows the normal path and has a witness script \texttt{<bob\_delayed\_pubkey\_sig> 0}, whereas the second input has a witness script \texttt{0 <penalty\_pubkey1\_sig> <penalty\_pubkey2\_sig> 1}.
 
 A proof-of-concept implementation of the necessary transactions can be found in
-\url{https://github.com/OrfeasLitos/cerberus-script}.
+\url{https://github.com/fc-submission-132/cerberus-script}.
 % \url{https://github.com/fc-submission-132/cerberus-script}.
  \fi
 
