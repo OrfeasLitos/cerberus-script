@@ -1,15 +1,16 @@
-\documentclass[runningheads]{llncs}
+\documentclass[twocolumn,showpacs,%
+  nofootinbib,aps,superscriptaddress,%
+  eqsecnum,prd,notitlepage,showkeys,10pt]{revtex4-1}
 
 % \usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
 % \usepackage{times}
 % \usepackage{fullpage}
 \usepackage{amsmath}
-% \usepackage{amsthm}
+\usepackage{amsthm}
 
 \usepackage{graphicx,wrapfig,lipsum,svg}
 %\usepackage{setspace}
 %\usepackage{subfig}
-\usepackage[hyphens]{url}
 \usepackage{hyperref}
 \usepackage{xspace}
 \usepackage{color}
@@ -17,14 +18,13 @@
 \usepackage{paralist}
 \usepackage[ruled,vlined]{algorithm2e}
 
-% \newtheorem{theorem}{Theorem}
-% \newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
 % \newtheorem{definition}{Definition}
 
 \usepackage{caption}
 \usepackage{tabularx}
 \usepackage{enumitem}
-\usepackage{cite}
 \usepackage{thmtools}
 \usepackage{thm-restate}
 
@@ -121,7 +121,6 @@
 \title{\sys Channels: \\ Incentivizing Watchtowers for Bitcoin}
 % \author{Anonymous
 % }
-\titlerunning{\sys channels}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
@@ -129,7 +128,6 @@
 %\author{Zeta Avarikioti\inst{1} \and
 %Orfeas Stefanos Thyfronitis Litos\inst{2} \and Roger Wattenhofer\inst{1}}
 %
-%\authorrunning{Z. Avarikioti et al.}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
@@ -141,8 +139,6 @@
 % }
 %
 
-\date{}
-\maketitle
 %\thispagestyle{empty}
 
 %
@@ -158,9 +154,10 @@ However, watchtowers will only do their job properly if there are financial ince
 In this work, we answer this question affirmatively, by introducing \sys channels, an extension of Lightning channels. \sys channels reward watchtowers while remaining secure against bribing and collusion; thus participants can safely go offline for an extended period of time.
 We show that \sys channels are correct, and provide a proof-of-concept implementation in the Bitcoin script language.
 
-\keywords{Bitcoin \and Security \and Payment channels \and Payment network \and Lightning network \and Watchtowers \and Collateral \and Incentives}
+\keywords{Bitcoin; Security; Payment channels; Payment network; Lightning network; Watchtowers; Collateral; Incentives}
 \end{abstract}
 
+\maketitle
 
 %-------------------------------------------------
 %---------------INTRODUCTION------------------------
@@ -414,7 +411,6 @@ Next, we present in detail the transactions involved in the first phase, \textit
 \end{itemize}
 
 
-% \vspace{-11pt}
 \begin{figure*}[ht!]
 	\fbox{
 	\begin{minipage}{0.97\textwidth}
@@ -455,7 +451,6 @@ Next, we present in detail the transactions involved in the first phase, \textit
 % \label{prot:open}
 \end{figure*}
 
-\vspace{-22pt}
 \subsection{Phase: Update}\label{subsec:update}
 
 The second phase, \textit{Update}, % described in Protocol \ref{prot:update},
@@ -518,7 +513,6 @@ All described transactions and their dependencies are illustrated in Figure \ref
 % \caption*{Update of a \sys channel}
 % \label{prot:update}
 \end{figure*}
-% \vspace{-11pt}
 
 \subsection{Phase: Close}\label{subsec:close}
 The last phase, \textit{Close}, handles the closing of a \sys channel.
@@ -648,7 +642,7 @@ $Abort$ is an intermediate phase, that can occur at any time between phases \tex
 To that end, the watchtower publishes on-chain the reclaim transaction. Consequently, timelock $T$ comes in effect, locking the watchtower's collateral for the penalty period.
 During this period, an honest hiring party will check the blockchain once. The party can then close the channel, hire a new watchtower or monitor the blockchain every $t$ time.
 
-\begin{figure}
+\begin{figure*}
     \centering
     %   \includegraphics[scale=0.52]{test.PNG}
       \includegraphics[width=\textwidth]{cerberous_it.PNG}
@@ -656,8 +650,7 @@ During this period, an honest hiring party will check the blockchain once. The p
     % \caption{The transactions of a \sys channel and their dependencies. When many spending conditions are available in the output, the one used is explicitly shown emphasized in the input.}
     \caption{\sys channel transactions. When many spending conditions are available in the output, the one used is explicitly shown emphasized in the input.}
     \label{fig:txs}
-\vspace{-10pt}
-\end{figure}
+\end{figure*}
 
 
 
@@ -692,11 +685,10 @@ We show that \sys channels are secure within our system model under any collusio
 %Omitted proofs can be found in Appendix \ref{sec:proofs}.
 
 
-\vspace{-4pt}
-\begin{restatable}{lemma}{abort}\label{lem:abort}
+\begin{lemma}[Abort]\label{lem:abort}
 Phase \textit{Abort} does not affect the security of a \sys channel, \ie, no honest party or watchtower can be cheated out of its funds.
 % During phase \textit{Abort}, no honest party or watchtower can be cheated out of its funds.
-\end{restatable}
+\end{lemma}
 \begin{proof}
 To prove the lemma, we distinguish three cases:
 \begin{enumerate}[label=(\alph*)]
@@ -728,16 +720,14 @@ Hence, no honest hiring party or watchtower can be cheated out of its funds when
 In contrast to the first two cases, when \textit{Abort} includes \textit{Close} entirely, the watchtower is still responsible for the correct operation of the channel.
 In such a case, the security of a \sys channel is the same with or without phase \textit{Abort}.
 Thus, \textit{Abort} does not affect the security of a \sys channel.
-\hfill \qed
 \end{proof}
 
 
-\vspace{-4pt}
 %Next, we show that any honest party will maintain at least its funds in a \sys channel, even against malicious parties.
-\begin{restatable}{lemma}{collusion}\label{lem:collusion}
+\begin{lemma}[Collusion]\label{lem:collusion}
 An honest \emph{\sys} member cannot be cheated out of its funds.
 %Honest \emph{\sys} channel members cannot involuntarily lose funds.
-\end{restatable}
+\end{lemma}
 \begin{proof}
 Watchtowers are incentivized to participate in \sys channels due to the occasional rewards on every update.
 Thus, we need only show that under any collusion scheme \sys channels remain secure with respect to the system model of Section~\ref{subsec:model}. This implies the scheme is also secure if no collusion occurs, \eg, normal channel operation or the watchtower is offline. Note that whenever we assume collusion, it can also be the case that the same person handles both colluding identities.
@@ -756,46 +746,41 @@ There can be the following collusion schemes:
     Note that this argument holds because the watchtower's collateral is locked on-chain involving the hiring party and thus cannot be used in parallel for other channels/parties.
 
     \item In the last case, $B$ colludes with watchtower $W$.
-    This is the simplest case, since $A$ is either online or employs its own watchtower. If $A$ is online the security holds similarly to the Lightning protocol, \ie, $A$ publishes the revocation transaction on-chain and receives all the funds of the channel. If $A$ employs a watchtower, then the previous analysis holds. \hfill \qed
+    This is the simplest case, since $A$ is either online or employs its own watchtower. If $A$ is online the security holds similarly to the Lightning protocol, \ie, $A$ publishes the revocation transaction on-chain and receives all the funds of the channel. If $A$ employs a watchtower, then the previous analysis holds.
  \end{enumerate}
 \end{proof}
 
-\vspace{-4pt}
-\begin{restatable}{lemma}{correctness}\label{lem:correctness}
+\begin{lemma}[Correctness]\label{lem:correctness}
 A \sys channel will not close in a state that is not the last state agreed by all the participants of the channel.
-\end{restatable}
+\end{lemma}
 \begin{proof}
-Any party of a \sys channel cannot gain more profit by deviating from the honest protocol execution, because all parties involved in a \sys channel always maintain (at least) their funds as shown in Lemma \ref{lem:collusion}. Hence, a rational party that aims to maximize its profit will honestly follow the \sys protocol in every phase, and ultimately close the \sys channel in a non-cheating state, as described in Section~\ref{sec:design}.\hfill \qed
+Any party of a \sys channel cannot gain more profit by deviating from the honest protocol execution, because all parties involved in a \sys channel always maintain (at least) their funds as shown in Lemma \ref{lem:collusion}. Hence, a rational party that aims to maximize its profit will honestly follow the \sys protocol in every phase, and ultimately close the \sys channel in a non-cheating state, as described in Section~\ref{sec:design}.
 \end{proof}
 
-\vspace{-4pt}
-\begin{restatable}{lemma}{time}\label{lem:time}
+\begin{lemma}[Time]\label{lem:time}
 Any party of a \sys channel can close it at any time.
-\end{restatable}
+\end{lemma}
 \begin{proof}
 Both parties of the \sys channel hold at least one valid commitment transaction (the one created at the last execution of the Update protocol, or if no update has taken place, the unique commitment transaction created during the Open protocol) which allows them to initiate phase \textit{Close}, unilaterally, as described in Section~\ref{subsec:close}.
-Hence, a \sys channel will be closed at the latest within time $t$ from publishing a commitment transaction on-chain (given a perfect underlying blockchain protocol and network synchrony).\hfill \qed
+Hence, a \sys channel will be closed at the latest within time $t$ from publishing a commitment transaction on-chain (given a perfect underlying blockchain protocol and network synchrony).
 \end{proof}
 
 
-\vspace{-4pt}
-\begin{restatable}{theorem}{goals}
+\begin{theorem}[Goals]
 \sys channels achieve Security (as defined in Section~\ref{subsec:goals}).
-\end{restatable}
+\end{theorem}
 \begin{proof}
 Lemma~\ref{lem:time} states that any party can close a \sys channel at any time. From Lemma~\ref{lem:correctness}, it holds that a \sys channel can only close on the last agreed by all parties state. Hence, any party of a \sys channel can enforce the last agreed state on-chain at any time.
 %From Lemma \ref{lem:time}, it holds that any party can close a \sys channel at any time. Thus, to prove %security it is enough to show that a \sys channel can only close on the last agreed by all parties state, %which is shown in Lemma \ref{lem:correctness}. Hence, any party of a \sys channel can enforce the last %agreed state on-chain at any time.
-\hfill \qed
 \end{proof}
 
 \subsection{Performance}
 
 Next, we show that \sys channels scale well, meaning that the number of on-chain transactions is constant and independent of the number of transactions executed in a channel, similarly to the Lightning protocol. The analysis below considers a single watchtower for each party of the channel. We discuss the scalability of the protocol if we enable multiple watchtowers in Section~\ref{sec:limit}.
 
-\vspace{-4pt}
-\begin{restatable}{theorem}{scale}
+\begin{theorem}[Scale]
 \sys channels achieve Scale-out.
-\end{restatable}
+\end{theorem}
 \begin{proof}
 In phase \textit{Open}, a \sys channel requires $3$ transactions, one funding transaction to open the channel and two collateral transactions for each watchtower to lock the collateral to the corresponding party of the channel.
 Phase \textit{Update} is executed off-chain, hence no transactions are published on-chain.
@@ -810,7 +795,6 @@ In case of fraud and an unresponsive watchtower, up to $4$ transactions are publ
 Phase \textit{Abort} is an optional intermediate phase that allows the watchtower to withdraw its service to the channel party. This phase includes one on-chain transaction -- the reclaim transaction -- but not additively to phase \textit{Close}. After phase \textit{Abort} the protocol for the party is similar to the Bitcoin Lightning protocol, which  requires at most $3$ on-chain transactions in total per channel. Thus, the worst case performance analysis does not include phase \textit{Abort}.
 
 Overall, a \sys channel requires at most $7$ on-chain transactions.
-\hfill \qed
 \end{proof}
 
 
@@ -929,7 +913,6 @@ Lastly, the penalty transaction 2 is similar to penalty transaction 1, but it sp
 \section{Limitations and future work}\label{sec:limit}
 %  In this section, we discuss possible future work, extensions, and limitations of \sys channels.
 
-\vspace{-3pt}
 % \paragraph{Privacy.}
 \subsubsection*{Privacy.}
 \sys channels maintain the privacy property, as defined in Section~\ref{subsec:goals}, assuming that the watchtowers are considered internal to the channel parties. This means that the transactions executed off-chain during the phase \textit{Update} are known only to the parties of the channel and the hired watchtowers. Any other third-party, external to the channel, does not have any knowledge on the state of the channel.
@@ -938,17 +921,14 @@ Nevertheless, \sys channels do not guarantee privacy from the watchtowers.
 Although Lightning watchtowers preserve the privacy of transactions from watchtowers, they also suffer from inadequate incentives for participation in the system. On the other hand, \sys channels provide the necessary incentive mechanisms to guarantee security, but watchtowers are aware of all transactions executed in the channel.
 Introducing stronger privacy mechanisms while maintaining the appropriate incentives is left for future work.
 
-\vspace{-3pt}
 % \paragraph{Extension to multiple watchtowers.}
 \subsubsection*{Extension to multiple watchtowers.}
 To enhance security against possible crash failures or withdrawal of watchtower service, parties can employ many watchtowers. In such a case, every watchtower needs to lock its collateral on-chain, thus the number of on-chain transactions grows linearly with the number of watchtowers. However, to guarantee security, the sum of all watchtowers' collateral can remain the same, \ie, at least greater than the total funds locked in the channel by both parties. This way the counterparty of the channel cannot bribe all watchtowers since the sum of the required bribes will exceed the party's potential gain. Therefore, there will be at least one watchtower that will publish the revocation transaction in case of fraud.
 
-\vspace{-3pt}
 % \paragraph{Rewards and Collateral.}
 \subsubsection*{Rewards and Collateral.}
 In the current system, rewards are awarded to the watchtowers on every update of the channel by the hired party via a one-way channel. Ideally, these rewards should be returned to the hired party if the watchtower misbehaves. To this end, we can modify the collateral transaction to build a bidirectional payment channel in which the watchtower locks collateral and the hirer locks future rewards. Then, during an update of the \sys channel and upon receiving the signed penalty transaction, the hirer sends some funds in this channel, paying the watchtower for its service. Note that this process does not require a fair exchange protocol since the watchtower can simply withdraw its service in case the hiring party does not pay the reward, similarly to the current protocol. However, this modification implies that the watchtowers' rewards will be locked during the lifetime of the channel.
 
-\vspace{-3pt}
 % \paragraph{Assumptions.}
 \subsubsection*{Assumptions.}
 %  The security of \sys channels depends on synchrony assumptions
@@ -1040,7 +1020,6 @@ Hence, no honest hiring party or watchtower can be cheated out of its funds when
 In contrast to the first two cases, when \textit{Abort} includes \textit{Close} entirely, the watchtower is still responsible for the correct operation of the channel.
 In such a case, the security of a \sys channel is the same with or without phase \textit{Abort}.
 Thus, overall, \textit{Abort} does not affect the security of a \sys channel.
-\hfill \qed
 \end{proof}
 
  Next, we show that any honest party will maintain at least its funds in a \sys channel, even against malicious parties.
@@ -1063,26 +1042,25 @@ There can be the following collusion schemes:
     Note that this argument holds because the watchtower's collateral is locked on-chain involving the hiring party and thus cannot be used in parallel for other channels/parties.
 
     \item In the last case, $B$ colludes with watchtower $W$.
-    This is the simplest case, since $A$ is either online or employs its own watchtower. If $A$ is online the security holds similarly to the Lightning protocol, \ie, $A$ publishes the revocation transaction on-chain and receives all the funds of the channel. If $A$ employs a watchtower, then the previous analysis holds. \hfill \qed
+    This is the simplest case, since $A$ is either online or employs its own watchtower. If $A$ is online the security holds similarly to the Lightning protocol, \ie, $A$ publishes the revocation transaction on-chain and receives all the funds of the channel. If $A$ employs a watchtower, then the previous analysis holds.
  \end{enumerate}
 \end{proof}
 
 
 \correctness*
 \begin{proof}
-Any party of a \sys channel cannot gain more profit by deviating from the honest protocol execution, because all parties involved in a \sys channel always maintain (at least) their funds as shown in Lemma \ref{lem:collusion}. Hence, a rational party that aims to maximize its profit will honestly follow the \sys protocol in every phase, and ultimately close the \sys channel in a non-cheating state, as described in Section~\ref{sec:design}.\hfill \qed
+Any party of a \sys channel cannot gain more profit by deviating from the honest protocol execution, because all parties involved in a \sys channel always maintain (at least) their funds as shown in Lemma \ref{lem:collusion}. Hence, a rational party that aims to maximize its profit will honestly follow the \sys protocol in every phase, and ultimately close the \sys channel in a non-cheating state, as described in Section~\ref{sec:design}.
 \end{proof}
 
 \time*
 \begin{proof}
 Both parties of the \sys channel hold at least one valid commitment transaction (the one created at the last execution of the Update protocol, or if no update has taken place, the unique commitment transaction created during the Open protocol) which allows them to initiate phase \textit{Close}, unilaterally, as described in Section~\ref{subsec:close}.
-Hence, a \sys channel will be closed at the latest within time $t$ from publishing a commitment transaction on-chain (given a perfect underlying blockchain protocol and network synchrony).\hfill \qed
+Hence, a \sys channel will be closed at the latest within time $t$ from publishing a commitment transaction on-chain (given a perfect underlying blockchain protocol and network synchrony).
 \end{proof}
 
 % \goals*
 % \begin{proof}
 % From Lemma \ref{lem:time}, it holds that any party can close a \sys channel at any time. Thus, to prove security it is enough to show that a \sys channel can only close on the last agreed by all parties state, which is shown in Lemma \ref{lem:correctness}. Hence, any party of a \sys channel can enforce the last agreed state on-chain at any time.
-% \hfill \qed
 % \end{proof}
 
 The analysis below considers a single watchtower for each channel party.
@@ -1103,7 +1081,6 @@ Furthermore, in case of fraud and an unresponsive watchtower, up to $4$ transact
 Phase \textit{Abort} is an optional intermediate phase, that allows the watchtower to withdraw its service to the channel party. This phase includes one on-chain transaction -- the reclaim transaction -- but not additively to phase \textit{Close}. After phase \textit{Abort} the protocol for the party is similar to the Bitcoin Lightning protocol, which  requires at most $3$ on-chain transactions in total for a channel operation. Thus, the worst case performance analysis does not include phase \textit{Abort}.
 
 Overall, a \sys channel requires at most $7$ on-chain transactions.
-\hfill \qed
 \end{proof}
 
 
